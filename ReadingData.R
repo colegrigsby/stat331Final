@@ -23,8 +23,16 @@ colnames(user.data) <- c("TUCASEID")
 user.data <- merge(user.data, cps[, c("TUCASEID", "state", "PRTAGE", "PEHRACTT", "PEEDUCA")], by="TUCASEID", all.x=TRUE)
 # NOTE: incluedes DC - to ignore DC, simply [-9] on stCounts 
 stCounts <- data.frame(table(st))$Freq
-levels(st)
 
+#Map Plot Stuff 
+us <- map_data("state")
+arr <- USArrests %>% 
+  add_rownames("region") %>% 
+  mutate(region=tolower(region))
+arr
+counts<-data.frame(rep(NA, 50))
+counts$stCounts <- stCounts[-9]
+counts$region <- arr$region
 
 # hours.data
 user.data <- user.data[user.data$PEHRACTT != -1 & user.data$PEEDUCA != -1,]
