@@ -34,10 +34,12 @@ counts<-data.frame(rep(NA, 50))
 counts$stCounts <- stCounts[-9]
 counts$region <- arr$region
 
-# hours.data
-user.data <- user.data[user.data$PEHRACTT != -1 & user.data$PEEDUCA != -1,]
-hours.data <- aggregate(PRTAGE ~ state, user.data, mean)
+# hours.data for Average Hours Worked
+user.data.temp <- user.data[user.data$PEHRACTT != -1 & user.data$PEEDUCA != -1,]
+hours.data <- aggregate(PRTAGE ~ state, user.data.temp, mean)
 
+counts$avgWorkedHours <- hours.data[-9,]$PRTAGE
+counts
 
 
 

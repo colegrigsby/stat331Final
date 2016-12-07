@@ -12,7 +12,7 @@ counts$region <- arr$region
 
 #variables that could be plotted
 counts$stCounts <- stCounts[-9]
-counts$avgWorkedHours <- hours.data[-9,]$PRTAGE
+
 
 
 mapPlot <- function(type) {

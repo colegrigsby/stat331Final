@@ -12,14 +12,14 @@ ui <- fluidPage(
     tabPanel("Tab2",
              sidebarPanel("side panel"),
              mainPanel("main panel"),
-             fluidRow(plotOutput("statePlot"),
+             fluidRow(plotOutput("hoursWorkedPlot"),
                       
                       wellPanel(
                         sliderInput(inputId = "nlabels",
-                                    label = "Top n States:",
+                                    label = "Choose color:",
                                     min = 1,
-                                    max = 10,
-                                    value = 6,
+                                    max = 3,
+                                    value = 2,
                                     step = 1)
                       )
              )
@@ -37,7 +37,7 @@ ui <- fluidPage(
 
 
 server <- function(input,output) {
-  
+  colors <- c("darkblue", "darkgreen", "blueviolet")
   output$nationPlot <- renderPlot({
     
     gg <- ggplot()
@@ -54,6 +54,26 @@ server <- function(input,output) {
     gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
     gg <- gg + theme(panel.border = element_blank(),panel.background = element_blank(),axis.ticks = element_blank(), axis.text = element_blank())
     gg
+  })
+  
+  output$hoursWorkedPlot <- renderPlot({
+    gg <- ggplot()
+    gg <- gg + geom_map(data=us, map=us,
+                        aes(x=long, y=lat, map_id=region),
+                        fill="#ffffff", color="#ffffff", size=0.15)
+    ### FILL HERE WITH WHAT WE want to see 
+    gg <- gg + geom_map(data=counts, map=us,
+                        aes(fill=avgWorkedHours, map_id=region),
+                        color="#ffffff", size=0.15)
+    gg <- gg + scale_fill_continuous(low='darkolivegreen1', high=colors[input$nlabels], 
+                                     guide='colorbar')
+    gg <- gg + labs(x=NULL, y=NULL)
+    gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+    gg <- gg + theme(panel.border = element_blank(),panel.background = element_blank(),axis.ticks = element_blank(), axis.text = element_blank())
+    gg
+    
+    
+    
   })
   
 }
