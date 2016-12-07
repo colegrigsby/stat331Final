@@ -4,6 +4,7 @@
 library(rsconnect)
 library(ggplot2)
 library(shiny)
+#source("ReadingData.R")
 
 ui <- fluidPage(
   tabsetPanel(
@@ -14,7 +15,8 @@ ui <- fluidPage(
                                 selectInput("mapData", 
                                             "Select what you would like to look at",
                                             choices=c("Percentage that hold a bachelors"
-                                                      ,"General Number of Participants")
+                                                      ,"General Number of Participants",
+                                                      "Average Age of Participants")
                                             , selected="General Number of Participants")
                                 )
                               

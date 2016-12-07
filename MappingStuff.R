@@ -6,12 +6,19 @@ plotNation <- function (data, age) {
   counts<-data.frame(rep(NA, 50))
   counts$stCounts <- stCounts[-9]
   
+  
   #if(data == "Percentage that hold a bachelors"){
     #counts$stCounts <- bachelorCounts / stCounts[-9]
   #}
-  #if(data == "Average Age"){
-  #counts$stCounts <- ageCounts / stCounts[-9]
-  #}
+  if(data == "Average Age of Participants"){
+    #ageCounts is the average age per state 
+    
+    ageCounts <- sapply(split(user.data$PRTAGE[user.data$PRTAGE >= age[1] & user.data$PRTAGE <= age[2]], user.data$state), mean)
+    
+    ageCounts <- data.frame(ageCounts)
+    
+    counts$stCounts <- ageCounts$ageCounts[-9]
+  }
   
   #TODO change color based off what were showing :) 
   
