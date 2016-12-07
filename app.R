@@ -22,7 +22,7 @@ ui <- fluidPage(
              ),
     tabPanel("Tab2",
              
-             fluidRow(
+             fluidRow(h1("Examing Data by Education Level"),
                checkboxGroupInput("educationLevel", "Select levels:",
                                                                    c("High School Incomplete" = 1,
                                                                      "High School Diploma" = 2,
