@@ -20,13 +20,20 @@ levels(st) <- c(state.abb[1:8], "DC", state.abb[9:50])
 cps$state <- st
 user.data <-data.frame(respondents$TUCASEID)
 colnames(user.data) <- c("TUCASEID")
-user.data <- merge(user.data, cps[, c("TUCASEID", "state", "PRTAGE")], by="TUCASEID", all.x=TRUE)
+user.data <- merge(user.data, cps[, c("TUCASEID", "state", "PRTAGE", "PEHRACTT", "PEEDUCA")], by="TUCASEID", all.x=TRUE)
 # NOTE: incluedes DC - to ignore DC, simply [-9] on stCounts 
 #Map Plot Stuff 
 us <- map_data("state")
 arr <- USArrests %>% 
   add_rownames("region") %>% 
   mutate(region=tolower(region))
+
+# hours.data for Average Hours Worked
+user.data.temp <- user.data[user.data$PEHRACTT != -1 & user.data$PEEDUCA != -1,]
+hours.data <- aggregate(PRTAGE ~ state, user.data.temp, mean)
+
+counts$avgWorkedHours <- hours.data[-9,]$PRTAGE
+counts
 
 
 
