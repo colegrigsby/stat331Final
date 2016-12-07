@@ -10,9 +10,15 @@ ui <- fluidPage(
     tabPanel("Tab1", mainPanel(h1("main panel")), fluidRow(plotOutput("nationPlot"),
                               sidebarPanel(sliderInput("ad","ad",1,10,c(2,4))))),
     tabPanel("Tab2",
-             sidebarPanel("side panel"),
-             mainPanel("main panel"),
-             fluidRow(plotOutput("hoursWorkedPlot"),
+             
+             fluidRow(
+               checkboxGroupInput("educationLevel", "Select levels:",
+                                                                   c("High School Incomplete" = 1,
+                                                                     "High School Diploma" = 2,
+                                                                     "Some College" = 3,
+                                                                     "Bachelor's/Associate's" = 4,
+                                                                     "Masters and Above" = 5), selected = 1),
+                  plotOutput("hoursWorkedPlot")),
                       
                       wellPanel(
                         sliderInput(inputId = "nlabels",
@@ -22,7 +28,7 @@ ui <- fluidPage(
                                     value = 2,
                                     step = 1)
                       )
-             )
+             
     ),
     tabPanel("Tab3",
              fluidRow(plotOutput("iStatePlot"),
@@ -33,6 +39,7 @@ ui <- fluidPage(
   )
   
 )
+
 
 
 
@@ -57,15 +64,41 @@ server <- function(input,output) {
   })
   
   output$hoursWorkedPlot <- renderPlot({
+    
+    selected <- input$educationLevel
+    
+    user.data.temp <- user.data[user.data$PEHRACTT != -1 & user.data$PEEDUCA != -1,]   
+
+
+    if (1 %in% selected == FALSE) {
+      user.data.temp <- user.data.temp[user.data.temp$PEEDUCA > 38,]
+    }
+    if ("2" %in% selected == FALSE) {
+      user.data.temp <- user.data.temp[user.data.temp$PEEDUCA != 39,]
+    }
+    if ("3" %in% selected == FALSE) {
+      user.data.temp <- user.data.temp[user.data.temp$PEEDUCA != 40,]
+    }
+
+    if ("5" %in% selected == FALSE) {
+      user.data.temp <- user.data.temp[user.data.temp$PEEDUCA < 44,]
+    }
+
+    
+
+    hours.data <- aggregate(PRTAGE ~ state, user.data.temp, mean)
+    counts$avgWorkedHours <- hours.data[-9,]$PRTAGE
+    
+
+    
     gg <- ggplot()
     gg <- gg + geom_map(data=us, map=us,
                         aes(x=long, y=lat, map_id=region),
                         fill="#ffffff", color="#ffffff", size=0.15)
-    ### FILL HERE WITH WHAT WE want to see 
     gg <- gg + geom_map(data=counts, map=us,
                         aes(fill=avgWorkedHours, map_id=region),
                         color="#ffffff", size=0.15)
-    gg <- gg + scale_fill_continuous(low='darkolivegreen1', high=colors[input$nlabels], 
+    gg <- gg + scale_fill_continuous(low='darkseagreen1', high=colors[input$nlabels], 
                                      guide='colorbar')
     gg <- gg + labs(x=NULL, y=NULL)
     gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 

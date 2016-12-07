@@ -39,6 +39,7 @@ user.data.temp <- user.data[user.data$PEHRACTT != -1 & user.data$PEEDUCA != -1,]
 hours.data <- aggregate(PRTAGE ~ state, user.data.temp, mean)
 
 counts$avgWorkedHours <- hours.data[-9,]$PRTAGE
+counts$education <- hours.data[-9]$sta
 counts
 
 
