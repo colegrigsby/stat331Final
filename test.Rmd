@@ -1,0 +1,179 @@
+---
+title: "Project"
+author: "Michael Halverson, Gloria Liu, Cole Grigsby, and Spencer Weisberg"
+date: "November 14, 2016"
+output: html_document
+---
+Datasets: http://www.bls.gov/tus/datafiles_0315.htm
+Descriptions: http://www.bls.gov/tus/atususersguide.pdf
+
+Datasets Description: 
+
+There are 8 datasets containing microdata from 2003-2015:
+
+Respondent file: The Respondent file contains information about ATUS respondents, including their labor force status and earnings.
+
+Roster file: The Roster file contains information about household members and nonhousehold children (under 18) of ATUS respondents. It includes information such as age and sex.
+
+Activity file: The Activity file contains information about how ATUS respondents spent their diary day. It includes information such as activity codes, activity start and stop times, and locations. Because Activity codes have changed somewhat between 2003 and 2015, this file uses activity codes that appear in the 2003-2015 ATUS Coding Lexicon (PDF).
+
+Activity summary file: The Activity summary file contains information about the total time each ATUS respondent spent doing each activity on the diary day. Because Activity codes have changed somewhat between 2003 and 2015, this file uses activity codes that appear in the 2003-2015 ATUS Coding Lexicon (PDF).
+
+Who file: The Who file includes codes that indicate who was present during each activity.
+
+CPS 2003-2015 file: The ATUS-CPS file contains information about each household member of all individuals selected to participate in ATUS. The information on the ATUS-CPS file was collected 2 to 5 months before the ATUS interview.
+
+Eldercare Roster file: The ATUS Eldercare Roster file contains information about people for whom the respondent provided care. Eldercare data have been collected since 2011.
+
+Replicate weights file: The Replicate weights file contains miscellaneous ATUS weights.
+
+2003-2015 ATUS Coding Lexicon (PDF): http://www.bls.gov/tus/lexiconnoex0315.pdf
+
+The ATUS interview data dictionary can be found here: http://www.bls.gov/tus/atusintcodebk0315.pdf
+
+The ATUS Current Population Survey (CPS) data dictionary can be found here: http://www.bls.gov/tus/atuscpscodebk0315.pdf
+
+The ATUS occupation and industry codes can be found here: http://www.bls.gov/tus/iocodes.htm
+
+The ATUS activity lexicon can be found here: http://www.bls.gov/tus/lexiconnoex0315.pdf
+
+The original datasets can be found here." 
+
+http://www.bls.gov/tus/freqvariables.pdf = super helpful 
+
+-1 is the same as NA; will have to a slice when performing analysis
+
+Read-In Statement for the data files, once you have set to the current directory: 
+```{r}
+setwd("C:/Users/Michael/Downloads/")
+#respondents <- read.delim("atusresp_0315/atusresp_0315.dat", sep = ",")
+#head(respondents)
+#roster <-read.delim("atusrost_0315/atusrost_0315.dat", sep = ",")
+#head(roster)
+#activity <- read.delim("atusact_0315/atusact_0315.dat", sep = ",")
+#head(activity)
+#summary <- read.delim("atussum_0315/atussum_0315.dat", sep = ",")
+#head(summary)
+#who <- read.delim("atuswho_0315/atuswho_0315.dat", sep=",")
+#head(who)
+#cps <- read.delim("atuscps_0315/atuscps_0315.dat", sep=",")
+#head(cps)
+#eldercare <- read.delim("atusrostec_1115/atusrostec_1115.dat", sep=",")
+#head(eldercare)
+#weights <-read.delim("atuswgts_0315/atuswgts_0315.dat", sep=",") 
+#head(weights)
+```
+
+Main categories for occupation: 
+
+```{r}
+#hist(respondents$TRMJOCGR)
+```
+
+1	Management, professional, and related occupations	3,156	25.8%
+
+2	Service occupations	1,242	10.1%
+
+3	Sales and office occupations	1,923	15.7%
+
+4	Farming, fishing, and forestry occupations	51	0.4%
+
+5	Construction and maintenance occupations	638	5.2%
+
+6	Production, transportation, and material moving occupations
+
+Hourly pay: 
+```{r}
+#hist(respondents$TRERNHLY[respondents$TRERNHLY != -1])
+```
+
+Data Research: 
+
+Exploring the research connections site and frequent variables BLS pdf doc we found some cool variables we want to explore, just to name a few, state/region, income, and job type 
+The data set contains user data from a survey/study from 2003-2015 of how people spend their time, not only does it include data about activities, it also has data about each subject in the study, so there is a lot of data about their jobs, families, where they live and many more neat things that can either be compared to each other or compared to their activity breakdowns
+
+Sleeping is an activity so it would be very cool to dig deep into sleep comparison. 
+The activity data are in variables with code numbers from http://www.bls.gov/tus/lexiconnoex0315.pdf
+
+The activities are grouped by category; for example, there is one grouping that is Sports and Recreation that includes things like Bowling and playing Football in it. Given that these will vary based on population, we will likely want to sum these for a given week and have a category just for Recreation, otherwise our dataset will end up with too many zeroes to make our visualizations meaningful. 
+
+It will make sense to do some data cleanup before the app gets the data to present it cleanly and simply 
+
+The times are also unweighted so the weights file can be used to adjust the weights of the times to increase statistical accuracy 
+
+References for outside sources 
+
+Bureau of Labor Statistics 
+http://www.bls.gov/tus/datafiles_0315.htm
+http://www.bls.gov/tus/freqvariables.pdf
+
+Research Connections 
+
+http://www.researchconnections.org/childcare/ssvd/studies/23025/datasets/0001/variables/TRERNHLY
+
+Data Cleaning: 
+
+We are going to cleanup the data and only allow the user to access certain variables, as there are many many many variables in most of the sets, some are not particularly useful. Also, removing NAs or values meant to be NAs will be a necessity. Will likely need to group similar time activities together.
+
+R Packages/Functions we may use and how they will be used: 
+
+1. Broom- cleans up statistical outputs
+
+2. Htmlwidgets (for help with Shiny app/widgets)
+
+3. ggplot2/lattice (obviously, plotting)
+
+4. Forecast (time series) 
+
+5. Dplyr- data cleanup
+
+6. Leaflet - if we wanna do geographical mapping
+
+7. Rworldmap or ggmap or another mapping library to show regional data 
+
+Basic visualizations: 
+
+Scatterplots (allow to pick x and y, give regression line; may see more below)
+
+Pie charts/bar graphs (allow for choice if picking single categorical vs. y, give choice of pie vs. bar; simply provide the graph they request, with appropriate visualization techniques)
+
+Statistical methods: 
+
+Using Base R functionality:
+
+Allow for simple linear regression and multiple linear regression. For simple linear regression, give them a scatter plot of x vs. y, and allow them to subset based off of categorical variables as well. For multiple, allow the user to pick up to n (use a checklist) amount of predictor variables for their chosen response, try to generate the minimum least squared errors/judge best based off R Squared Values/AIC/BIC/potential cross validation (may have to implement on our own). 
+
+Additional R Functions we will write/use outside packages:
+
+Note: For some of these, we may split the viewer in two to provide both statistical information and a plot. 
+
+K Means Clustering (have written in python; may need to import from a package or write our own). Place their point in a scatter plot, and color it to prediction. Give their predicted point distinguishing characteristic so they can see where it stands. If doing multiple variables, potentially put in scatter plot array with the same as above; or present distances to each group (whether it be Euclidian or not) to other groups.
+
+Discriminant Analysis; allow user to pick group to discriminate between/profile. Present a plot of the discriminant function and how it separated groups, and give the variables most significant for distinguishing between the two. 
+
+Time Series: We haven't much time to look deeply into time series, but this is another avenue we may look into.
+
+Other helper functions: 
+
+Selected data handler - redirects the user's selected variables to the selected function they wish to happen  (EX job type, income, location, family size, age, etc) 
+
+Regression function - takes input vectors and tests a linear regression
+
+Helper functions for regression analysis 
+
+Mapping - applicable if there is a geographical variable selected 
+
+
+You can find a preview of how the app will look included with the assignment submission.
+
+Other App info: 
+
+Activity Analysis: 
+
+Dropdown to select type of activity and display data against 
+
+Limit the data for plots and regressions based on certain activity/activities 
+
+Show the general timing of selected ones (could be versus each other or versus total) (pie chart/bar chart) 
+
+
