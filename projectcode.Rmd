@@ -1,0 +1,137 @@
+---
+title: "Project Exploratory"
+author: "Michael Halverson"
+date: "November 17, 2016"
+output: html_document
+---
+
+```{r}
+summary <- read.csv("C:/Users/Michael/Downloads/atussum_0315/atussum_0315.dat")
+```
+```{r}
+perscare <-c("010101","010102","010199","010201","010299","010301","010399","010401","010499","010501","010599","019999")
+household <-c("020101","020102","020103","020104","020199","020201","020203","020299","020301","020302","020303","020399","020401","020402","020499","020501","020502","020599","020681","020699","020701","020799","020801","020899","020901","020902","020903","020904","020905","020999","029999")
+caringhh <- c("030101","030102","030103","030104","030105","030186","030108","030109","030110","030111","030112","030199","030201","030202","030203","030204","030299","030301","030302","030303","030399","030401","030402","030403","030404","030405","030499","030501","030502","030503","030504","030599","039999")
+caringnhh <- c("040101","040102","040103","040104","040105","040186","040108","040109","040110","040111","040112","040199","040201","040202","040203","040204","040299","040301","040302","040303","040399","040401","040402","040403","040404","040405","040499","040501","040502","040503","040504","040505","040506","040507","040508","040599","049999")
+work <- c("050101","050102","050103","050189","050201","050202","050203","050204","050289","050301","050302","050303","050304","050389","050481","050403","050404","050405","050499","059999")
+education <-c("060101","060102","060103","060104","060199","060201","060202","060203","060289","060301","060302","060303","060399","060401","060402","060403","060499","069999")
+shopping <-c("070101","070102","070103","070104","070105","070199","070201","070299","070301","070399","079999")
+careserv <-c("080101","080102","080199","080201","080202","080203","080299","080301","080302","080399","080401","080402","080403","080499","080501","080502","080599","080601","080602","080699","080701","080702","080799","080801","080899","089999")
+householdserv <-c("090101","090102","090103","090104","090199","090201","090202","090299","090301","090302","090399","090401","090402","090499","090501","090502","090599","099999")
+govserv <- c("100101","100102","100103","100199","100201","100299","100381","100383","100399","100401","100499","109999")
+eat <- c("110101","110199","110281","110289","119999")
+social <- c("120101","120199","120201","120202","120299","120301","120302","120303","120304","120305","120306","120307","120308","120309","120310","120311","120312","120313","120399","120401","120402","120403","120404","120405","120499","120501","120502","120503","120504","120599","129999")
+sports<-c("130101","130102","130103","130104","130105","130106","130107","130108","130109","130110","130111","130112","130113","130114","130115","130116","130117","130118","130119","130120","130121","130122","130123","130124","130125","130126","130127","130128","130129","130130","130131","130132","130133","130134","130135","130136","130199","130201","130202","130203","130204","130205","130206","130207","130208","130209","130210","130211","130212","130213","130214","130215","130216","130217","130218","130219","130220","130221","130222","130223","130224","130225","130226","130227","130228","130229","130230","130231","130232","130299","130301","130302","130399","130401","130402","130499","139999")
+religious<-c(140101:140105,149999)
+volunteer<-c(150101:150106,150199,150201:150204, 150299,150301:150302,150399,150401,150402,150499,150501,150599,150601,150602,150699,159989)
+telephone<-c(160101:160108,169989)
+travel<-c(180101,180199,180280,180381,180382,180399,180481,180482,180499,180501,180502,180589,180601,180682,180699,180701,180782,180801:180807,180899,180901,180902,180903,180904,180905,180999,181081,181002,181099,181101,181199,181201,181202,181283,181204,181299,181301,181302,181399,181401,181499,181501,181599,181601,181699,181801,181899,189999)
+falsehoods<-c(500101,500103:500107,509989)
+all<-c(perscare,household,caringhh,caringnhh,work,education,shopping,careserv,householdserv,govserv,eat,social,religious,volunteer,telephone,travel,falsehoods,sports)
+answers<-c("perscare","household","caringhh","caringnhh","work","education","shopping","careserv","householdserv","govserv","eat","social","religious","volunteer","telephone","travel","falsehoods","sports")
+summary$household=0
+summary$perscare=0
+summary$caringhh=0
+summary$caringnhh=0
+summary$work=0
+summary$education=0
+summary$shopping=0
+summary$careserv=0
+summary$householdserv=0
+summary$govserv=0
+summary$eat=0
+summary$social=0
+summary$religious=0
+summary$volunteer=0
+summary$telephone=0
+summary$travel=0
+summary$falsehoods=0
+summary$sports=0
+for (i in 1:length(answers)){
+  for (j in 1:length(get(answers[i]))){
+    #message(answers[i])
+    #message(paste("t",get(answers[i])[j],sep=""))
+    summary[answers[i]]=summary[answers[i]]+summary[paste("t",get(answers[i])[j],sep="")]
+  }
+}
+
+```
+```{r}
+summary$total=0
+for (i in 1:length(answers)){
+  summary$total=summary$total+summary[answers[i]]
+}
+  
+```
+
+```{r}
+ggplot(summary,aes(x=summary$social,y=summary$sports)) + stat_binhex()
+ggplot(summary,aes(x=summary$social,y=summary$sports)) + geom_bin2d()
+ggplot(summary,aes(x=summary$social,y=summary$sports)) + geom_point(alpha = 0.1)
+ggplot(summary2,aes(x=summary2$TRERNWA,y=summary2$social))+geom_point(alpha=0.4)+geom_smooth(method="lm")
+
+#PEEDUCA EDUCATIONAL ATTAINMENT
+#TRERNWA weekly earnings 
+```
+```{r}
+plotter<-function(x,y,cat=c(-5),dframe){
+  xf=unlist(dframe[x])
+  yf=unlist(dframe[y])
+  if ((typeof(xf)=="integer" || typeof(xf)=="numeric") && (typeof(yf)=="integer" || typeof(yf)=="numeric")){
+    message("yo")
+    if (cat[1]==-5){
+      message("dawg")
+      ggplot(dframe,aes_string(x=x,y=y))+geom_point(alpha=0.2)+geom_smooth(method="lm")
+    } else {
+      message("entered")
+      ggplot(dframe,aes_string(x=x,y=y,col=cat))+geom_point(alpha=0.2)
+    }
+  }
+  if (classof(xf)=="character"){
+    ggplot(dframe) +geom_bar(aes_string(x,y,fill="blue"),col="black",fill="blue",position = "dodge", stat = "summary", fun.y ="mean")
+    
+  }
+}
+```
+```{r}
+plotter<-function(x,y,cat=c(-5),dframe){
+  #xf=unlist(dframe[x])
+  #yf=unlist(dframe[y])
+  if ((class(x)=="integer" || class(x)=="numeric") && (class(y)=="integer" || class(y)=="numeric")){
+    message("yo")
+    if (cat[1]==-5){
+      message("dawg")
+      ggplot(dframe)+geom_point(aes(x=x,y=y),alpha=.2)+geom_smooth(method="lm")
+      #qplot(data=dframe,x=x,y=y)
+    } else {
+      message("entered")
+      ggplot(dframe)+geom_point(aes_string(x=x,y=y,col=cat),alpha=0.2)
+  #    qplot(data=dframe,x=x,y=y,col=cat)
+    }
+  } else if (class(x)=="character"){
+    message("wrong")
+    ggplot(dframe) +geom_bar(aes_string(x,y,fill="blue"),col="black",fill="blue",position = "dodge", stat = "summary", fun.y ="mean")
+    
+  }
+}
+```
+
+```{r}
+nodegrees<-c(31:38)
+hsdegree<-c(39)
+somecollege<-c(40:42)
+bachelors<-c(43)
+masters<-c(44)
+otherhigher<-c(45,46)
+all<-c("nodegrees","hsdegree","somecollege","bachelors","masters","otherhigher")
+summary$educ="NULL-needs UPDATING"
+```
+```{r}
+for (i in 1:length(all)){
+  currentlist<-get(all[i])
+  for (j in 1:length(currentlist)){
+    message(currentlist)
+    summary[summary$PEEDUCA==currentlist[j],]$educ=all[i]
+  }
+}
+```
