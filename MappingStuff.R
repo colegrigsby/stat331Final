@@ -6,11 +6,18 @@ plotNation <- function (data, age) {
   counts<-data.frame(rep(NA, 50))
   counts$stCounts <- stCounts[-9]
   
-  
-  #if(data == "Percentage that hold a bachelors"){
-    #counts$stCounts <- bachelorCounts / stCounts[-9]
-  #}
-  if(data == "Average Age of Participants"){
+  if (data == "Percent of State Population Participating"){
+    counts$stCounts <- stCounts[-9] / statePopulations$`2010pop.`[c(-9,-52)]
+    
+  }
+  if(data == "Percentage that hold a bachelors"){ #TODO 
+    bachelorCounts <- sapply(sapply(split(user.data$PEEDUCA[user.data$PRTAGE >= age[1] & user.data$PRTAGE <= age[2]], user.data$state), function(f){ return(f==43)}), sum)
+    
+    bachelorCounts <- data.frame(bachelorCounts)
+    
+    counts$stCounts <- bachelorCounts$bachelorCounts[-9] / stCounts[-9]
+  }
+  if(data == "Average Age of Participants"){ #TODO should it just be the counts and not the mean...? 
     #ageCounts is the average age per state 
     
     ageCounts <- sapply(split(user.data$PRTAGE[user.data$PRTAGE >= age[1] & user.data$PRTAGE <= age[2]], user.data$state), mean)

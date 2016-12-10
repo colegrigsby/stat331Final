@@ -16,7 +16,8 @@ ui <- fluidPage(
                                             "Select what you would like to look at",
                                             choices=c("Percentage that hold a bachelors"
                                                       ,"General Number of Participants",
-                                                      "Average Age of Participants")
+                                                      "Average Age of Participants",
+                                                      "Percent of State Population Participating")
                                             , selected="General Number of Participants")
                                 )
                               

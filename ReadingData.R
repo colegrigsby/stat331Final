@@ -1,6 +1,7 @@
 setwd("~/Documents/JuniorCalPoly/Stat331/final proj/stat331Final/")
 
 library(maps)
+library(rvest)
 data("state.fips")
 
 
@@ -23,7 +24,7 @@ colnames(user.data) <- c("TUCASEID")
 user.data <- merge(user.data, cps[, c("TUCASEID", "state", "PRTAGE", "PEHRACTT", "PEEDUCA")], by="TUCASEID", all.x=TRUE)
 # NOTE: incluedes DC - to ignore DC, simply [-9] on stCounts 
 #Map Plot Stuff 
-us <- map_data("state")
+us <- map_data("state") #TODO 
 arr <- USArrests %>% 
   add_rownames("region") %>% 
   mutate(region=tolower(region))
@@ -34,9 +35,17 @@ hours.data <- aggregate(PRTAGE ~ state, user.data.temp, mean)
 
 counts$avgWorkedHours <- hours.data[-9,]$PRTAGE
 counts$education <- hours.data[-9]$sta
-counts
 
 
 
+#State populations in 2003 --> data from study is from 2003-2015 - this could be cool for mapping 
+url <- "http://www.infoplease.com/ipa/A0004986.html"
 
+link <- read_html(url)
+
+html <- html_nodes(link, css="table")
+
+statePopulations <- html_table(html, fill=T)
+statePopulations <- statePopulations[[2]]
+statePopulations[-1] <- as.data.frame( lapply(statePopulations[-1], function(x) { as.numeric(as.character(gsub("[^0-9]", "", x))) }))
 
