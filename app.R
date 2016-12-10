@@ -20,7 +20,9 @@ ui <- fluidPage(
                                                       "Percent of State Population Participating")
                                             , selected="General Number of Participants")
                                 )
-                              
+                       #TODO add another sidebar panel or something with some quick facts 
+                        # max, min, mean etc.... 
+                        # ACTIVITIES PER STATE WOULD BE DOPE 
                               
              ),
     tabPanel("Tab2",
