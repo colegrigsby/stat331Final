@@ -33,24 +33,83 @@ plotNation <- function (data, age) {
   
 #variables that could be plotted
 
+  return(counts)
 
-#mapPlot <- function(type) {
+#  gg <- ggplot()
+#  gg <- gg + geom_map(data=us, map=us,
+#                      aes(x=long, y=lat, map_id=region),
+#                      fill="#ffffff", color="#ffffff", size=0.15)
+  ### FILL HERE WITH WHAT WE want to see 
+#  gg <- gg + geom_map(data=counts, map=us,
+#                      aes(fill=stCounts, map_id=region),
+#                      color="#ffffff", size=0.15)
+#  gg <- gg + scale_fill_continuous(low='thistle2', high='darkblue', guide=guide_colorbar(title=data))
+#  gg <- gg + labs(x=NULL, y=NULL)  
+#  gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
+#  gg <- gg + theme(panel.border = element_blank(),panel.background = element_blank(),axis.ticks = element_blank(), axis.text = element_blank())
+#  return(gg)
+  
+}
 
+plotNationEducation <- function(education) {
+ 
+  plotThis <- hs_incomplete
+  
+  if (education == "High School Incomplete") {
+    plotThis <- hs_incomplete
+  }
+  if (education == "High School Diploma") {
+    plotThis <- hs_complete
+  }
+  if (education == "Some College") {
+    plotThis <- some_college
+  }
+  if (education == "Bachelor's/Associate's") {
+    plotThis <- ba_complete
+  }
+  if (education == "Masters and Above") {
+    plotThis <- masters_above
+  }
+  head(ba_complete)
+  
+  
+  averages <- aggregate(hoursWorked ~ state, plotThis, mean)
+  averages <- averages[-9,] 
+  averages$region <- arr$region
+
+  us <- map_data("state")
+  
+ arr <- USArrests %>% 
+    tibble::rownames_to_column("region") %>% 
+     mutate(region=tolower(region))
+  
+
+  
+  test <-  merge(arr, averages, by="region")[c(1,7)]
+  
   gg <- ggplot()
   gg <- gg + geom_map(data=us, map=us,
                       aes(x=long, y=lat, map_id=region),
                       fill="#ffffff", color="#ffffff", size=0.15)
-  ### FILL HERE WITH WHAT WE want to see 
-  gg <- gg + geom_map(data=counts, map=us,
-                      aes(fill=stCounts, map_id=region),
+  gg <- gg + geom_map(data=test, map=us,
+                      aes(fill=hoursWorked, map_id=region),
                       color="#ffffff", size=0.15)
-  gg <- gg + scale_fill_continuous(low='thistle2', high='darkblue', guide=guide_colorbar(title=data))
-  gg <- gg + labs(x=NULL, y=NULL)  
+  gg <- gg + scale_fill_continuous(low='thistle2', high='purple', 
+                                   guide='colorbar')
+  gg <- gg + labs(x=NULL, y=NULL)
   gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
-  gg <- gg + theme(panel.border = element_blank(),panel.background = element_blank(),axis.ticks = element_blank(), axis.text = element_blank())
+  gg <- gg + theme(panel.border = element_blank())
+  gg <- gg + theme(panel.background = element_blank())
+  gg <- gg + theme(axis.ticks = element_blank())
+  gg <- gg + theme(axis.text = element_blank())
   return(gg)
   
+  
 }
+#plotNationEducation()
+
+
+
 # 
 #   
 #   ### FILL HERE WITH WHAT WE want to see 

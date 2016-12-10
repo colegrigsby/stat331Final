@@ -1,38 +1,64 @@
 #install.packages('rsconnect')
 #install.packages(c('ggplot2', 'shiny'))
-
+#install.packages("googleVis")
+#install.packages("devtools")
+library(devtools)
+library(dplyr)
 library(rsconnect)
 library(ggplot2)
 library(shiny)
+library(googleVis)
+library(maps)
+
+
+
 #source("ReadingData.R")
 
 ui <- fluidPage(
   tabsetPanel(
-    tabPanel("National Map", mainPanel(h1("Location Based Participant Data")), fluidRow(plotOutput("nationPlot")),
-                              sidebarPanel(
-                                h5("Just a few things to get a feel for where the data comes from"),
-                                sliderInput("ageRange","Age",min(user.data$PRTAGE),max(user.data$PRTAGE),c(min(user.data$PRTAGE),max(user.data$PRTAGE))),
-                                selectInput("mapData", 
-                                            "Select what you would like to look at",
-                                            choices=c("Percentage that hold a bachelors"
-                                                      ,"General Number of Participants",
-                                                      "Average Age of Participants",
-                                                      "Percent of State Population Participating")
-                                            , selected="General Number of Participants")
+    tabPanel("National Map", h1(textOutput("header")),
+                            
+                            fluidRow(column(8,htmlOutput("gvis"), offset=3)),
+                            fluidRow(column(5,radioButtons("whichPlot", label="Change Plot", 
+                                                           choices = c("Participant Data" = 1, "Education Data" = 2), selected=1,inline=TRUE), offset=4)),
+             
+                                fluidRow(      
+                                  column(4,
+                                  h5("Just a few things to get a feel for where the data comes from"),
+                                  sliderInput("ageRange","Age",min(user.data$PRTAGE),max(user.data$PRTAGE),c(min(user.data$PRTAGE),max(user.data$PRTAGE))),
+                                  selectInput("mapData", 
+                                               "Select what you would like to look at",
+                                               choices=c("Percentage that hold a bachelors",
+                                                         "General Number of Participants",
+                                                         "Average Age of Participants",
+                                                         "Percent of State Population Participating"), 
+                                                          selected="General Number of Participants")
+                                  ),
+                                  
+                                  column(4,
+                                         h5("more data!"),
+                                         radioButtons("educationLevel1", label="Highest level of Education Obtained",
+                                                     choices = c("High School Incomplete",
+                                                       "High School Diploma",
+                                                       "Some College",
+                                                       "Bachelor's/Associate's",
+                                                       "Masters and Above"), selected = "Bachelor's/Associate's"),
+                                          offset=3
+                                         )                                    
                                 )
-                              
-                              
-             ),
+
+
+                              ),
     tabPanel("Tab2",
              
              fluidRow(h1("Examing Data by Education Level"),
-               checkboxGroupInput("educationLevel", "Select levels:",
-                                                                   c("High School Incomplete" = 1,
-                                                                     "High School Diploma" = 2,
-                                                                     "Some College" = 3,
-                                                                     "Bachelor's/Associate's" = 4,
-                                                                     "Masters and Above" = 5), selected = 1),
-                  plotOutput("hoursWorkedPlot")),
+               selectInput("educationLevel", "Select levels:",
+                                                                   c("High School Incomplete",
+                                                                     "High School Diploma",
+                                                                     "Some College",
+                                                                     "Bachelor's/Associate's",
+                                                                     "Masters and Above"), selected = "Bachelor's/Associate's")
+               ),
                       
                       wellPanel(
                         sliderInput(inputId = "nlabels",
@@ -59,6 +85,37 @@ source("MappingStuff.R")
 
 server <- function(input,output) {
   colors <- c("darkblue", "darkgreen", "blueviolet")
+  
+  #myYear <- reactive({
+  #  if (input$whichPlot
+  #})
+
+  
+  startAge <- reactive({
+    input$ageRange[1]
+  })
+  endAge <- reactive({
+    input$ageRange[2]
+  })
+  output$header <- renderText({
+    if (input$whichPlot == TRUE) {
+      paste("Data on Participants aged", startAge(), "to", endAge())
+    }
+    else {
+      paste("Data on Participant Education Level and Average Hours Worked")
+    }
+    
+  })
+  
+  output$mainPlot <- renderPlot({
+    if (input$whichPlot == 2) {
+      plotNation(input$mapData, input$ageRange)
+    }
+    else {
+      plotNationEducation(input$educationLevel)
+    }
+  })
+
   output$nationPlot <- renderPlot({
     
     #todo input$ageRange[1] = lower , input$ageRange[2]=upper 
@@ -66,50 +123,74 @@ server <- function(input,output) {
   })
   
   output$hoursWorkedPlot <- renderPlot({
-    
-    selected <- input$educationLevel
-    
-    user.data.temp <- user.data[user.data$PEHRACTT != -1 & user.data$PEEDUCA != -1,]   
-
-
-    if (1 %in% selected == FALSE) {
-      user.data.temp <- user.data.temp[user.data.temp$PEEDUCA > 38,]
-    }
-    if ("2" %in% selected == FALSE) {
-      user.data.temp <- user.data.temp[user.data.temp$PEEDUCA != 39,]
-    }
-    if ("3" %in% selected == FALSE) {
-      user.data.temp <- user.data.temp[user.data.temp$PEEDUCA != 40,]
-    }
-
-    if ("5" %in% selected == FALSE) {
-      user.data.temp <- user.data.temp[user.data.temp$PEEDUCA < 44,]
-    }
-
-    
-
-    hours.data <- aggregate(PRTAGE ~ state, user.data.temp, mean)
-    counts$avgWorkedHours <- hours.data[-9,]$PRTAGE
-    
-
-    
-    gg <- ggplot()
-    gg <- gg + geom_map(data=us, map=us,
-                        aes(x=long, y=lat, map_id=region),
-                        fill="#ffffff", color="#ffffff", size=0.15)
-    gg <- gg + geom_map(data=counts, map=us,
-                        aes(fill=avgWorkedHours, map_id=region),
-                        color="#ffffff", size=0.15)
-    gg <- gg + scale_fill_continuous(low='darkseagreen1', high=colors[input$nlabels], 
-                                     guide='colorbar')
-    gg <- gg + labs(x=NULL, y=NULL)
-    gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
-    gg <- gg + theme(panel.border = element_blank(),panel.background = element_blank(),axis.ticks = element_blank(), axis.text = element_blank())
-    gg
-    
+    plotNationEducation(input$educationLevel)
     
     
   })
+  
+  
+  output$gvis <- renderGvis({
+    
+    if (input$whichPlot == 1) {
+      plotThis <- hs_incomplete
+      education <- input$educationLevel1
+      
+      if (education == "High School Incomplete") {
+        plotThis <- hs_incomplete
+      }
+      if (education == "High School Diploma") {
+        plotThis <- hs_complete
+      }
+      if (education == "Some College") {
+        plotThis <- some_college
+      }
+      if (education == "Bachelor's/Associate's") {
+        plotThis <- ba_complete
+      }
+      if (education == "Masters and Above") {
+        plotThis <- masters_above
+      }
+      averages <- aggregate(hoursWorked ~ state, plotThis, mean)
+      averages <- averages[-9,] 
+      averages$region <- arr$region
+      
+      us <- map_data("state")
+      
+      arr <- USArrests %>% 
+        tibble::rownames_to_column("region") %>% 
+        mutate(region=tolower(region))
+      
+      
+      
+      test <-  merge(arr, averages, by="region")[c(1,7)]
+      
+      head(test)
+      gvisGeoChart(test,
+                   locationvar="region", colorvar="hoursWorked",
+                   options=list(region="US", displayMode="regions",
+                                resolution="provinces",
+                                width=500, height=400,
+                                colorAxis="{colors:['#FFFFFF', '#8E35EF']}"
+                   ))      
+    }
+    else {
+      participants <- plotNation(input$mapData, input$ageRange)
+      gvisGeoChart(participants,
+                   locationvar="region", colorvar="stCounts",
+                   options=list(region="US", displayMode="regions",
+                                resolution="provinces",
+                                width=500, height=400,
+                                colorAxis="{colors:['#FFFFFF', '#8E35EF']}"
+                   ))  
+      
+    }
+
+
+  })
+  
+
+  #shinyjs::onclick("mapData", print("hi"))
+
   
 }
 
