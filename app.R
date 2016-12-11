@@ -2,6 +2,7 @@
 #install.packages(c('ggplot2', 'shiny'))
 #install.packages("googleVis")
 #install.packages("devtools")
+#install.packages("shinyjs")
 library(devtools)
 library(dplyr)
 library(rsconnect)
@@ -10,13 +11,14 @@ library(shiny)
 library(googleVis)
 library(maps)
 library(rvest)
-
+library(shinyjs)
 
 
 #source("ReadingData.R")
 #source("MappingStuff.R")
 
 ui <- fluidPage(
+  useShinyjs(), 
   tabsetPanel(
     tabPanel("National Map", fluidRow(column(8,h1(textOutput("header")),offset=2)),
                             
@@ -28,7 +30,7 @@ ui <- fluidPage(
                                   column(4,
                                   h5("Participant Demographics Plot"),
                                   sliderInput("ageRange","Age",min(user.data$PRTAGE),max(user.data$PRTAGE),c(min(user.data$PRTAGE),max(user.data$PRTAGE))),
-                                  selectInput("mapData", 
+                                selectInput("mapData", 
                                                "Select what you would like to look at",
                                                choices=c("Percentage that hold a bachelors",
                                                          "General Number of Participants",
@@ -120,8 +122,22 @@ ui <- fluidPage(
 
 
 server <- function(input,output) {
+  enable("mapData")
+  enable("ageRange")
+  disable("educationLevel1")
   colors <- c("darkblue", "darkgreen", "blueviolet")
-  
+  observeEvent(input$whichPlot, {
+    #"Participant Data" = 2, "Education Data" = 1
+    if (input$whichPlot == 1){
+      disable("mapData")
+      disable("ageRange")
+      enable("educationLevel1")
+    } else {
+      enable("mapData")
+      enable("ageRange")
+      disable("educationLevel1")
+    }
+  })
   output$clusters <- renderPlot({
     clustering(n=2,df=10,summary$GTMETSTA,summary$PEEDUCA)
   }) 
