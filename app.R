@@ -13,8 +13,8 @@ library(rvest)
 
 
 
-source("ReadingData.R")
-source("MappingStuff.R")
+#source("ReadingData.R")
+#source("MappingStuff.R")
 
 ui <- fluidPage(
   tabsetPanel(
@@ -78,12 +78,32 @@ ui <- fluidPage(
                       )
              
     ),
-    tabPanel("Tab3",
-             fluidRow(plotOutput("iStatePlot"),
-                      wellPanel(
-                        htmlOutput("selectState"))
-             )
+    tabPanel("Michaels stuff",
+             sidebarPanel(radioButtons("chooseX", label="Choose an X variable", choices= c("Education", 
+                                                                                        "Social", 
+                                                                                        "Eat", 
+                                                                                        "Social", 
+                                                                                        "Religious"), 
+                                    selected="Education"),
+                          
+                          radioButtons("chooseY", label="Choose a Y variable", choices= c("Education", 
+                                                                                           "Social", 
+                                                                                           "Eat", 
+                                                                                           "Social", 
+                                                                                           "Religious"), 
+                                       selected="Education")               
+             ),
+             mainPanel(
+               plotOutput("plotter")
+             ),
+             
+             fluidRow(),
+             fluidRow(),
+             fluidRow()
     )
+    
+    
+    
   )
   
 )
@@ -93,10 +113,10 @@ ui <- fluidPage(
 server <- function(input,output) {
   colors <- c("darkblue", "darkgreen", "blueviolet")
   
-  #myYear <- reactive({
-  #  if (input$whichPlot
-  #})
-
+  
+  output$plotter <- renderPlot({
+    plotter("perscare", "social", dframe=summary)
+  }) 
   
   startAge <- reactive({
     input$ageRange[1]
@@ -171,7 +191,7 @@ server <- function(input,output) {
       
       test <-  merge(arr, averages, by="region")[c(1,7)]
       
-      head(test)
+      
       gvisGeoChart(test,
                    locationvar="region", colorvar="hoursWorked",
                    options=list(region="US", displayMode="regions",

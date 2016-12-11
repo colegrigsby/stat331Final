@@ -6,8 +6,11 @@ output: html_document
 ---
 
 ```{r}
-summary <- read.csv("C:/Users/Michael/Downloads/atussum_0315/atussum_0315.dat")
+#summary <- read.csv("C:/Users/Michael/Downloads/atussum_0315/atussum_0315.dat")
+summary <- read.csv("atussum_0315.dat")
+
 ```
+
 ```{r}
 perscare <-c("010101","010102","010199","010201","010299","010301","010399","010401","010499","010501","010599","019999")
 household <-c("020101","020102","020103","020104","020199","020201","020203","020299","020301","020302","020303","020399","020401","020402","020499","020501","020502","020599","020681","020699","020701","020799","020801","020899","020901","020902","020903","020904","020905","020999","029999")
@@ -67,11 +70,12 @@ for (i in 1:length(answers)){
 ```
 
 ```{r}
+library(ggplot2)
 ggplot(summary,aes(x=summary$social,y=summary$sports)) + stat_binhex()
 ggplot(summary,aes(x=summary$social,y=summary$sports)) + geom_bin2d()
 ggplot(summary,aes(x=summary$social,y=summary$sports)) + geom_point(alpha = 0.1)
-ggplot(summary2,aes(x=summary2$TRERNWA,y=summary2$social))+geom_point(alpha=0.4)+geom_smooth(method="lm")
-
+#ggplot(summary2,aes(x=summary2$TRERNWA,y=summary2$social))+geom_point(alpha=0.4)+geom_smooth(method="lm")
+ggplot(summary,aes(x=summary$TRERNWA,y=summary$social))+geom_point(alpha=0.4)+geom_smooth(method="lm")
 #PEEDUCA EDUCATIONAL ATTAINMENT
 #TRERNWA weekly earnings 
 ```
