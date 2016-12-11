@@ -20,7 +20,7 @@ ui <- fluidPage(
                             
                             fluidRow(column(8,htmlOutput("gvis"), offset=3)),
                             fluidRow(column(5,radioButtons("whichPlot", label="Change Plot", 
-                                                           choices = c("Participant Data" = 1, "Education Data" = 2), selected=1,inline=TRUE), offset=4)),
+                                                           choices = c("Participant Data" = 2, "Education Data" = 1), selected=1,inline=TRUE), offset=4)),
              
                                 fluidRow(      
                                   column(4,
@@ -98,7 +98,7 @@ server <- function(input,output) {
     input$ageRange[2]
   })
   output$header <- renderText({
-    if (input$whichPlot == TRUE) {
+    if (input$whichPlot == 2) {
       paste("Data on Participants aged", startAge(), "to", endAge())
     }
     else {
