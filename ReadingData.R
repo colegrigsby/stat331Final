@@ -54,3 +54,7 @@ statePopulations <- html_table(html, fill=T)
 statePopulations <- statePopulations[[2]]
 statePopulations[-1] <- as.data.frame( lapply(statePopulations[-1], function(x) { as.numeric(as.character(gsub("[^0-9]", "", x))) }))
 
+# lat long for labeling states 
+centers <- read.csv('state_latlon.csv')
+centers <- centers[c(-1, -4,-9, -13, -27,-42, -50),]
+centers

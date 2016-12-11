@@ -47,6 +47,11 @@ ui <- fluidPage(
                                           offset=2, style = "background-color:#D1D0CE;"
                                          )                                    
                                 )
+                       #TODO add another sidebar panel or something with some quick facts 
+                        # max, min, mean etc.... 
+                        # ACTIVITIES PER STATE WOULD BE DOPE 
+                              
+             
 
 
                               ),

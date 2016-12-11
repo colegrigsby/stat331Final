@@ -9,22 +9,35 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# American Time Use Survey (ATUS) Shiny App
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+____/3 Introduction to the project (Report)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+#### We have created a Shiny App that helps visualize certain aspects of the ATUS from 2003 - 2015. There are multiple data sets from the ATUS survey; we primarily used the activity summary data set and the cps data set which provided data about the respondents. 
 
-```{r cars}
-summary(cars)
-```
 
-## Including Plots
+____/3 Explanation of the statistical concepts (Report)
 
-You can also embed plots, for example:
+#### For the app, we wanted to both explore correlations between variables and regional data. For this we created a map of the United States with multiple options to view different statistics based on state. We also have a tab that plot
+Clustering expl. 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+## Tabs 
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+- What each does 
+
+- Linear Models 
+
+
+____/3 Appropriately divided into sections (Report)
+____/3 Produces plots to illustrate results (Report)
+____/3 Plots are adjusted to publication quality (Report)
+____/3 Explains results (Report)
+
+## Conclusion
+- We should probably explore one or two relationships and then also 
+
+____/3 Provides an overall conclusion (Report)
+____/6 Overall quality (organization, grammar, explanation, etc.) (Report)
+
+
+

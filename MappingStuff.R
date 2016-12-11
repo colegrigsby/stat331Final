@@ -91,9 +91,16 @@ plotNationEducation <- function(education) {
   gg <- gg + geom_map(data=us, map=us,
                       aes(x=long, y=lat, map_id=region),
                       fill="#ffffff", color="#ffffff", size=0.15)
+
   gg <- gg + geom_map(data=test, map=us,
                       aes(fill=hoursWorked, map_id=region),
                       color="#ffffff", size=0.15)
+  
+  # gg <- gg + geom_text(aes(x = longitude, y = latitude, label = state), # USE this to label states if need be 
+  #                      data= centers,
+  #                      alpha = 1,
+  #                      color = "black")
+  # 
   gg <- gg + scale_fill_continuous(low='thistle2', high='purple', 
                                    guide='colorbar')
   gg <- gg + labs(x=NULL, y=NULL)
