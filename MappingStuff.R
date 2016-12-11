@@ -5,6 +5,7 @@ plotNation <- function (data, age) {
   stCounts <- data.frame(table(user.data$state[user.data$PRTAGE >= age[1] & user.data$PRTAGE <= age[2]]))$Freq
   counts<-data.frame(rep(NA, 50))
   counts$stCounts <- stCounts[-9]
+  message(data)
   
   if (data == "Percent of State Population Participating"){
     counts$stCounts <- stCounts[-9] / statePopulations$`2010pop.`[c(-9,-52)]
