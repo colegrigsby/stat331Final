@@ -124,7 +124,15 @@ for (i in 1:length(answers)){
 }
 
 
-
+clustering<-function(n=2,df,clustcolumns,plotcolumns){
+  set.seed(20)
+  clusters <- kmeans(df[,clustcolumns], n, nstart = 20)$cluster
+  message("#pastit")
+  if (length(plotcolumns)!=2){
+  } else{
+    return(ggplot(df)+geom_point(aes_string(x=plotcolumns[1],y=plotcolumns[2],col=clusters),alpha=0.2))
+  }
+}
 
 
 
@@ -151,6 +159,6 @@ plotter<-function(x,y,cat=c(-5),dframe){
 
 
 colnames(summary)
-plotter("perscare", "social",cat=c(-5), dframe=summary)
+plotter("perscare", "TRYHHCHILD", "sports", dframe=summary)
 class(summary$perscare)
 head(summary)

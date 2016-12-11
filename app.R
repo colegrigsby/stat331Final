@@ -26,7 +26,7 @@ ui <- fluidPage(
              
                                 fluidRow(      
                                   column(4,
-                                  h5("Just a few things to get a feel for where the data comes from"),
+                                  h5("Participant Demographics Plot"),
                                   sliderInput("ageRange","Age",min(user.data$PRTAGE),max(user.data$PRTAGE),c(min(user.data$PRTAGE),max(user.data$PRTAGE))),
                                   selectInput("mapData", 
                                                "Select what you would like to look at",
@@ -57,28 +57,31 @@ ui <- fluidPage(
 
 
                               ),
-    tabPanel("Tab2",
+    tabPanel("Clustering",
+             h1("Clustering"),
+             sidebarPanel(radioButtons("chooseX", label="Choose an X variable", choices= c("Education", 
+                                                                                           "Social", 
+                                                                                           "Eat", 
+                                                                                           "Social", 
+                                                                                           "Religious"), 
+                                       selected="Education"),
+                          
+                          radioButtons("chooseY", label="Choose a Y variable", choices= c("Education", 
+                                                                                          "Social", 
+                                                                                          "Eat", 
+                                                                                          "Social", 
+                                                                                          "Religious"), 
+                                       selected="Education")               
+             ),
+             mainPanel(
+               plotOutput("clusters")
+             )
              
-             fluidRow(h1("Examing Data by Education Level"),
-               selectInput("educationLevel", "Select levels:",
-                                                                   c("High School Incomplete",
-                                                                     "High School Diploma",
-                                                                     "Some College",
-                                                                     "Bachelor's/Associate's",
-                                                                     "Masters and Above"), selected = "Bachelor's/Associate's")
-               ),
-                      
-                      wellPanel(
-                        sliderInput(inputId = "nlabels",
-                                    label = "Choose color:",
-                                    min = 1,
-                                    max = 3,
-                                    value = 2,
-                                    step = 1)
-                      )
+             
              
     ),
-    tabPanel("Michaels stuff",
+    tabPanel("Regression?",
+             h1("Regression"),
              sidebarPanel(radioButtons("chooseX", label="Choose an X variable", choices= c("Education", 
                                                                                         "Social", 
                                                                                         "Eat", 
@@ -91,7 +94,13 @@ ui <- fluidPage(
                                                                                            "Eat", 
                                                                                            "Social", 
                                                                                            "Religious"), 
-                                       selected="Education")               
+                                       selected="Education"),
+                          radioButtons("chooseCat", label="Choose a categorical variable", choices= c("Education", 
+                                                                                          "Social", 
+                                                                                          "Eat", 
+                                                                                          "Social", 
+                                                                                          "Religious"), 
+                                       selected="Education")
              ),
              mainPanel(
                plotOutput("plotter")
@@ -113,6 +122,9 @@ ui <- fluidPage(
 server <- function(input,output) {
   colors <- c("darkblue", "darkgreen", "blueviolet")
   
+  output$clusters <- renderPlot({
+    clustering(n=2,df=10,summary$GTMETSTA,summary$PEEDUCA)
+  }) 
   
   output$plotter <- renderPlot({
     plotter("perscare", "social", dframe=summary)
@@ -126,7 +138,7 @@ server <- function(input,output) {
   })
   output$header <- renderText({
     if (input$whichPlot == 2) {
-      paste("Data on Participants aged", startAge(), "to", endAge())
+      paste("Demographics of Participants aged", startAge(), "to", endAge())
     }
     else {
       paste("Data on Participant Education Level and Average Hours Worked")
@@ -143,17 +155,6 @@ server <- function(input,output) {
     }
   })
 
-  output$nationPlot <- renderPlot({
-    
-    #todo input$ageRange[1] = lower , input$ageRange[2]=upper 
-    plotNation(input$mapData, input$ageRange)
-  })
-  
-  output$hoursWorkedPlot <- renderPlot({
-    plotNationEducation(input$educationLevel)
-    
-    
-  })
   
   
   output$gvis <- renderGvis({

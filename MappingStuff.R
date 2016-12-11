@@ -34,6 +34,7 @@ plotNation <- function (data, age) {
 #variables that could be plotted
 
   return(counts)
+  #returning the dataframe with plotting information so gVis plot can be generated
 
 #  gg <- ggplot()
 #  gg <- gg + geom_map(data=us, map=us,
@@ -109,31 +110,4 @@ plotNationEducation <- function(education) {
   
   
 }
-#plotNationEducation()
-
-
-
-# 
-#   
-#   ### FILL HERE WITH WHAT WE want to see 
-#   
-#   if (type == "stCounts") {
-#     gg <- gg + geom_map(data=counts, map=us,
-#                         aes(fill=stCounts, map_id=region),
-#                         color="#ffffff", size=0.15)  
-#   }
-#   if (type == "avgWorkedHours") {
-#     gg <- gg + geom_map(data=counts, map=us,
-#                         aes(fill=avgWorkedHours, map_id=region),
-#                         color="#ffffff", size=0.15)
-#   }
-#   
-#   
-#   gg <- gg + scale_fill_continuous(low='thistle2', high='darkblue', 
-#                                    guide='colorbar')
-#   gg <- gg + labs(x=NULL, y=NULL)
-#   gg <- gg + coord_map("albers", lat0 = 39, lat1 = 45) 
-#   gg <- gg + theme(panel.border = element_blank(),panel.background = element_blank(),axis.ticks = element_blank(), axis.text = element_blank())
-#   gg  
-# }
 
