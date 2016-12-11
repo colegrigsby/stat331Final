@@ -18,7 +18,7 @@ source("MappingStuff.R")
 
 ui <- fluidPage(
   tabsetPanel(
-    tabPanel("National Map", h1(textOutput("header")),
+    tabPanel("National Map", fluidRow(column(8,h1(textOutput("header")),offset=2)),
                             
                             fluidRow(column(8,htmlOutput("gvis"), offset=3)),
                             fluidRow(column(5,radioButtons("whichPlot", label="Change Plot", 
@@ -35,17 +35,18 @@ ui <- fluidPage(
                                                          "Average Age of Participants",
                                                          "Percent of State Population Participating"), 
                                                           selected="General Number of Participants")
+                                  ,offset=1, style = "background-color:#D1D0CE;"
                                   ),
                                   
                                   column(4,
-                                         h5("more data!"),
+                                         h5("Education Plot Options"),
                                          radioButtons("educationLevel1", label="Highest level of Education Obtained",
                                                      choices = c("High School Incomplete",
                                                        "High School Diploma",
                                                        "Some College",
                                                        "Bachelor's/Associate's",
                                                        "Masters and Above"), selected = "Bachelor's/Associate's"),
-                                          offset=3
+                                          offset=2, style = "background-color:#D1D0CE;"
                                          )                                    
                                 )
                        #TODO add another sidebar panel or something with some quick facts 
