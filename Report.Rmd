@@ -11,25 +11,46 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # American Time Use Survey (ATUS) Shiny App
 
-____/3 Introduction to the project (Report)
 
-#### We have created a Shiny App that helps visualize certain aspects of the ATUS from 2003 - 2015. There are multiple data sets from the ATUS survey; we primarily used the activity summary data set and the cps data set which provided data about the respondents. 
+## Intro (____/3 Introduction to the project (Report))
+
+#### We have created a Shiny App that helps visualize certain aspects of the American Time Use Survey (ATUS) from 2003 - 2015. The ATUS measures the amount of time people spend doing various activities, such as paid work, childcare, volunteering, and socializing.  There are multiple data sets in the ATUS survey; we primarily used the activity summary data set and the cps data set which provided data about the respondents. 
 
 
-____/3 Explanation of the statistical concepts (Report)
+## Statistical Concepts Used (____/3 Explanation of the statistical concepts (Report))
 
-#### For the app, we wanted to both explore correlations between variables and regional data. For this we created a map of the United States with multiple options to view different statistics based on state. We also have a tab that plot
-Clustering expl. 
+#### We wanted to explore correlations between variables and regional data. The easiest  way to visualize this was geographically, on a map. We created a map of the United States with multiple options to view different statistics by state. 
+
+#### We also have a tab that plot
+
+####Clustering expl. 
 
 ## Tabs 
 
-- What each does 
+## National Map Tab
+
+### The first tab is an map of the US, with the option of selecting between two maps. There is a radio button beneath the map to toggle between two plot options. We used the google charts package to plot them so they were interactive- hovering the mouse over each state reveals the name of the state and the percentage/number for the selected data in that state. The headers are also reactive, and change to match the data and the range of data being displayed
+
+### Participant Demographics Plot
+### The first plot can be used to explore the demographics of the participants and comparing statistics between states. We thought that before trying to examine the data, it was important to know where and who the data was coming from. The user can look at general number of survey participants in each state, the percentage of state population participating, percentage of those participating with bachelors degrees, and average age of participants. There is also a slider to adjust the range of ages to look at. Something interesting we realized was that, of the people surveyed, alaska had the highest percentage of 15 year olds with bachelor's degrees (we don't have to add this..)
+
+### Education Plot
+### Another relationship we found interesting to compare between states is education level and average number of hours worked per week. The user can select with radio buttons which category of education level to view on the map, and compare averages between states. An example of something interesting we found was that for people with only some college (no degree) in Montana worked much longer hours than people in other states of the same category, which is made clear by the much darker shade. Another trend we noticed by using the map is people who do not have a high school diploma tend to work more per week on average in the lower states than in the upper states. 
+
+
+## Clustering Tab
+
+#### someone else do this
+
+## Regression or something Tab
+
+#### someone else do this
 
 - Linear Models 
 
 
 ____/3 Appropriately divided into sections (Report)
-____/3 Produces plots to illustrate results (Report)
+____/3 Produces plots to illustrate results (Report) ??
 ____/3 Plots are adjusted to publication quality (Report)
 ____/3 Explains results (Report)
 

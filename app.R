@@ -40,7 +40,7 @@ ui <- fluidPage(
                                   
                                   column(4,
                                          h5("Education Plot Options"),
-                                         radioButtons("educationLevel1", label="Highest level of Education Obtained",
+                                         radioButtons("educationLevel1", label="Highest Level of Education Obtained",
                                                      choices = c("High School Incomplete",
                                                        "High School Diploma",
                                                        "Some College",
