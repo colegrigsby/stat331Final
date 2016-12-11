@@ -19,13 +19,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Statistical Concepts Used (____/3 Explanation of the statistical concepts (Report))
 
-#### We wanted to explore correlations between variables and regional data. The easiest  way to visualize this was geographically, on a map. We created a map of the United States with multiple options to view different statistics by state. 
-
-#### We also have a tab that plot
+#### For the app, we wanted to both explore correlations between variables and regional data. For this we created a map of the United States with multiple options to view different statistics based on state. The map allows users to look at a few general demographics we thought would be interesting, as well as a map that uses education level and average hours worked by state.  We also have a tab that plots certain variables against each other to allow a user to see correlation, or lack thereof, between variables. 
 
 ####Clustering expl. 
 
-## Tabs 
+# Tabs 
 
 ## National Map Tab
 
@@ -46,7 +44,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #### someone else do this
 
-- Linear Models 
+- Linear Models tab? 
 
 
 ____/3 Appropriately divided into sections (Report)

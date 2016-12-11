@@ -157,6 +157,11 @@ plotter<-function(x,y,cat=c(-5),dframe){
   }
 }
 
+capitalize <- function(x) {
+  up <- paste(toupper(substring(x, 1,1)) , substring(x, 2), sep="")
+  return(up)
+}
+
 
 colnames(summary)
 plotter("perscare", "TRYHHCHILD", "sports", dframe=summary)

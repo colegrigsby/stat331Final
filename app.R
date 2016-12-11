@@ -15,7 +15,7 @@ library(shinyjs)
 
 
 #source("ReadingData.R")
-#source("MappingStuff.R")
+source("MappingStuff.R")
 
 ui <- fluidPage(
   useShinyjs(), 
@@ -176,41 +176,42 @@ server <- function(input,output) {
   output$gvis <- renderGvis({
     
     if (input$whichPlot == 1) {
-      plotThis <- hs_incomplete
-      education <- input$educationLevel1
-      
-      if (education == "High School Incomplete") {
-        plotThis <- hs_incomplete
-      }
-      if (education == "High School Diploma") {
-        plotThis <- hs_complete
-      }
-      if (education == "Some College") {
-        plotThis <- some_college
-      }
-      if (education == "Bachelor's/Associate's") {
-        plotThis <- ba_complete
-      }
-      if (education == "Masters and Above") {
-        plotThis <- masters_above
-      }
-      averages <- aggregate(hoursWorked ~ state, plotThis, mean)
-      averages <- averages[-9,] 
-      averages$region <- arr$region
-      
-      us <- map_data("state")
-      
-      arr <- USArrests %>% 
-        tibble::rownames_to_column("region") %>% 
-        mutate(region=tolower(region))
-      
-      
-      
-      test <-  merge(arr, averages, by="region")[c(1,7)]
+      # plotThis <- hs_incomplete
+      # education <- input$educationLevel1
+      # 
+      # if (education == "High School Incomplete") {
+      #   plotThis <- hs_incomplete
+      # }
+      # if (education == "High School Diploma") {
+      #   plotThis <- hs_complete
+      # }
+      # if (education == "Some College") {
+      #   plotThis <- some_college
+      # }
+      # if (education == "Bachelor's/Associate's") {
+      #   plotThis <- ba_complete
+      # }
+      # if (education == "Masters and Above") {
+      #   plotThis <- masters_above
+      # }
+      # averages <- aggregate(hoursWorked ~ state, plotThis, mean)
+      # averages <- averages[-9,] 
+      # averages$region <- arr$region
+      # 
+      # us <- map_data("state")
+      # 
+      # arr <- USArrests %>% 
+      #   tibble::rownames_to_column("region") %>% 
+      #   mutate(region=tolower(region))
+      # 
+      # test <-  merge(arr, averages, by="region")[c(1,7)]
       
       
+      test <- plotNationEducation(input$educationLevel1)
+      
+      #print(head(test))
       gvisGeoChart(test,
-                   locationvar="region", colorvar="hoursWorked",
+                   locationvar="region", colorvar="Hours Worked",
                    options=list(region="US", displayMode="regions",
                                 resolution="provinces",
                                 width=500, height=400,
@@ -219,8 +220,9 @@ server <- function(input,output) {
     }
     else {
       participants <- plotNation(input$mapData, input$ageRange)
-      gvisGeoChart(participants,
-                   locationvar="region", colorvar="stCounts",
+      print(participants)
+      gvisGeoChart(participants[[1]],
+                   locationvar="region", colorvar=participants[[2]],
                    options=list(region="US", displayMode="regions",
                                 resolution="provinces",
                                 width=500, height=400,
