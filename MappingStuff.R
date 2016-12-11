@@ -77,11 +77,7 @@ plotNationEducation <- function(education) {
   averages <- averages[-9,] 
   averages$region <- arr$region
 
-  us <- map_data("state")
-  
- arr <- USArrests %>% 
-    tibble::rownames_to_column("region") %>% 
-     mutate(region=tolower(region))
+
   
 
   

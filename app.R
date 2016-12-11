@@ -9,10 +9,12 @@ library(ggplot2)
 library(shiny)
 library(googleVis)
 library(maps)
+library(rvest)
 
 
 
-#source("ReadingData.R")
+source("ReadingData.R")
+source("MappingStuff.R")
 
 ui <- fluidPage(
   tabsetPanel(
@@ -85,7 +87,6 @@ ui <- fluidPage(
   
 )
 
-source("MappingStuff.R")
 
 
 server <- function(input,output) {
