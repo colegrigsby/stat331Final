@@ -5,12 +5,12 @@ library(rvest)
 data("state.fips")
 
 
-#respondents <- read.delim("atusresp_0315.dat", sep = ",")
+respondents <- read.delim("C:/Users/Michael/Downloads/atusresp_0315/atusresp_0315.dat", sep = ",")
 #roster <- read.delim("atusrost_0315.dat", sep = ",")
 #activity <- read.delim("atusact_0315.dat", sep = ",")
-#summary <- read.delim("atussum_0315.dat", sep = ",")
+summary <- read.delim("C:/Users/Michael/Downloads/atussum_0315/atussum_0315.dat", sep = ",")
 #who <- read.delim("atuswho_0315.dat", sep = ",")
-#cps <- read.delim("atuscps_0315.dat", sep = ",")
+cps <- read.delim("C:/Users/Michael/Downloads/atuscps_0315/atuscps_0315.dat", sep = ",")
 #eldercare <- read.delim("atusrostec_1115.dat", sep = ",")
 #weights <- read.delim("atuswgts_0315.dat", sep = ",")
 
@@ -551,8 +551,9 @@ answers <-
     "falsehoods",
     "Sports"
   )
-
+summary=summary[summary$TRERNWA!=-1,]
 summary$Age = summary$TEAGE
+summary$Year=summary$TUYEAR
 summary$WeeklyEarnings = summary$TRERNWA
 summary$household = 0
 summary$perscare = 0
@@ -666,7 +667,7 @@ clustering <- function(n = 2, df, clustcolumns, plotcolumns) {
   #print(n)
   
   #df <- df[complete.cases(df[,clustcolumns]),clustcolumns]
-
+  
   #print(which(is.na(df[,clustcolumns])))
   
   clusters <- kmeans(df[,clustcolumns], n, nstart = 10)$cluster
