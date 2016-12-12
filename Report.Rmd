@@ -19,9 +19,8 @@ We have created a Shiny App that helps visualize certain aspects of the American
 
 ## Statistical Concepts Used 
 ### Explanation of the statistical concepts (3 pts)
-For the app, we wanted to both explore correlations between variables and regional data. For this we created a map of the United States with multiple options to view different statistics based on state. The map allows users to look at a few general demographics we thought would be interesting, as well as a map that uses education level and average hours worked by state.  We also have a tab that plots certain variables against each other to allow a user to see correlation, or lack thereof, between variables. 
+For the app, we wanted to both explore correlations between variables and regional data. For this we created a map of the United States with multiple options to view different statistics based on state. The map allows users to look at a few general demographics we thought would be interesting, as well as a map that uses education level and average hours worked by state.  We also have a tab that plots certain variables against each other to allow a user to see correlation, or lack thereof, between variables. This plot will also plot a regression line to see if the correlation that exists between the two variables is positive or negative. In addition, we will plot relationships between two variables and then cluster based on them, so the user can see organization within the data.
 
-####Clustering explanation
 
 ## Tabs 
 
@@ -40,11 +39,15 @@ Another relationship we found interesting to compare between states is education
 
 
 ### Clustering Tab
+The Clustering tab produces a scatter plot of a selected predictor variable and a selected response variable, and then does a k means cluster on them and colors each point by which cluster it belongs to. This allows the user to visualize the data in a colorful way and see natural separations in the data they may not see otherwise. For example, the plot of Age vs. Weekly Earnings allows us to see the main separation in data is in the earnings, and to see different 'tiers' of earners.
 
+![](ClusteringPlot.png)
 #### Header
 
 ### Regression Tab
+The regression tab allows the user to plot a predictor variable vs. a response variable. The predictor variable can either be categorical or quantitative, while the response may be quantitative. If the predictor is categorical, then the tab will produce a bar graph of means for all levels of the categorical variable, which is what a regression would predict. If quantitative, then it will produce a scatter plot of the two variables and a fitted regression line of the two. This allows the user to see if there exists positive or negative correlations between sets of variables. For example, one sane see the negative correlation betwen time spent socializing and earnings (gulp!) below:  
 
+![](RegressionPlot.png)
 #### Header
 
 - Linear Models tab? 
