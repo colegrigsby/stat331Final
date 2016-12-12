@@ -13,7 +13,7 @@ library(maps)
 library(rvest)
 library(shinyjs)
 
-
+#enable the source files when running to have all data and methods available to app :) 
 #source("ReadingData.R")
 source("MappingStuff.R")
 
@@ -122,10 +122,11 @@ ui <- fluidPage(
 
 
 server <- function(input,output) {
+  
+  #disabling buttons for mapping 
   enable("mapData")
   enable("ageRange")
   disable("educationLevel1")
-  colors <- c("darkblue", "darkgreen", "blueviolet")
   observeEvent(input$whichPlot, {
     #"Participant Data" = 2, "Education Data" = 1
     if (input$whichPlot == 1){
@@ -138,6 +139,10 @@ server <- function(input,output) {
       disable("educationLevel1")
     }
   })
+  
+  colors <- c("darkblue", "darkgreen", "blueviolet")
+  
+  
   output$clusters <- renderPlot({
     clustering(n=2,df=10,summary$GTMETSTA,summary$PEEDUCA)
   }) 

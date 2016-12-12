@@ -6,7 +6,8 @@ output: html_document
 ---
 
 ```{r}
-summary <- read.csv("C:/Users/Michael/Downloads/atussum_0315/atussum_0315.dat")
+library(ggplot2)
+summary <- read.csv("atussum_0315.dat")
 ```
 ```{r}
 perscare <-c("010101","010102","010199","010201","010299","010301","010399","010401","010499","010501","010599","019999")

@@ -28,11 +28,8 @@ plotNation <- function (data, age) {
   }
   if(data == "Average Age of Participants"){ #TODO should it just be the counts and not the mean...? 
     #ageCounts is the average age per state 
-    
     ageCounts <- sapply(split(user.data$PRTAGE[user.data$PRTAGE >= age[1] & user.data$PRTAGE <= age[2]], user.data$state), mean)
-    
     ageCounts <- data.frame(ageCounts)
-    
     counts$Age <- ageCounts$ageCounts[-9]
     name <- "Age"
     
