@@ -1,8 +1,13 @@
+#install packages
+
 #install.packages('rsconnect')
 #install.packages(c('ggplot2', 'shiny'))
 #install.packages("googleVis")
 #install.packages("devtools")
 #install.packages("shinyjs")
+
+#load the libraries required for the application to run
+
 library(devtools)
 library(dplyr)
 library(rsconnect)
@@ -13,13 +18,17 @@ library(maps)
 library(rvest)
 library(shinyjs)
 library(ggplot2)
+
+
 #enable the source files when running to have all data and methods available to app :)
-#source("ReadingData.R")
+source("ReadingData.R")
 source("MappingStuff.R")
 
-ui <- fluidPage(
+#ui for the shiny app
+ui <- fluidPage(#use JS for the enable and disable to work
   useShinyjs(),
   tabsetPanel(
+    #map tab
     tabPanel(
       "National Map",
       fluidRow(column(8, h1(
@@ -86,14 +95,10 @@ ui <- fluidPage(
           style = "background-color:#D1D0CE;"
         )
       )
-      #TODO add another sidebar panel or something with some quick facts
-      # max, min, mean etc....
-      # ACTIVITIES PER STATE WOULD BE DOPE
-      
-      
-      
       
     ),
+    
+    #clustering panel
     tabPanel(
       "Clustering",
       h1("Clustering"),
@@ -144,61 +149,76 @@ ui <- fluidPage(
       
       
     ),
+    
+    #regression panel
     tabPanel(
       "Regression",
       h1("Regression"),
       fluidRow(plotOutput("plotter")),
-      sidebarPanel(
-        radioButtons(
-          "choosePred",
-          label = "Choose a Predictor variable",
-          choices = c(
-            "Work",
-            "Education",
-            "Social",
-            "Sports",
-            "Age",
-            "WeeklyEarnings",
-            "Religious",
-            "Volunteer","Year", "EducationLevel", "Day", "Race"
-          ),
-          selected = "Education"
-        )),
-      sidebarPanel(
-        radioButtons(
-          "chooseResp",
-          label = "Choose a Response variable",
-          choices = c(
-            "Work",
-            "Education",
-            "Social",
-            "Sports",
-            "Age",
-            "WeeklyEarnings",
-            "Religious",
-            "Volunteer"
-          ),
-          selected = "Age"
-        )),
       fluidRow(
-        verbatimTextOutput("modelInfo")
-      )
+        sidebarPanel(
+          radioButtons(
+            "choosePred",
+            label = "Choose a Predictor variable",
+            choices = c(
+              "Work",
+              "Education",
+              "Social",
+              "Sports",
+              "Age",
+              "WeeklyEarnings",
+              "Religious",
+              "Volunteer",
+              "Year",
+              "EducationLevel",
+              "Day",
+              "Race"
+            ),
+            selected = "Education"
+          )
+        ),
+        sidebarPanel(
+          radioButtons(
+            "chooseResp",
+            label = "Choose a Response variable",
+            choices = c(
+              "Work",
+              "Education",
+              "Social",
+              "Sports",
+              "Age",
+              "WeeklyEarnings",
+              "Religious",
+              "Volunteer"
+            ),
+            selected = "Age"
+          )
+        ),
+        
+        
+        sidebarPanel(
+          textInput(
+            "nums",
+            label = h3("Numeric Input For Prediction"),
+            value = "Enter positive number..."
+          ),
+          verbatimTextOutput("value")
+        )
+      ),
+      fluidRow(verbatimTextOutput("modelInfo")),
+      fluidRow(verbatimTextOutput("modelCorr"))
     )
-    
-    
-    
-    
-    
-    
   ))
 
 
-
+#server function for shiny app to run, this handles input and output
 server <- function(input, output) {
-  #disabling buttons for mapping
+  #disabling buttons for mapping initialization
   enable("mapData")
   enable("ageRange")
   disable("educationLevel1")
+  
+  #observing the plot type for mapping and enabling/disabling certain fields
   observeEvent(input$whichPlot, {
     #"Participant Data" = 2, "Education Data" = 1
     if (input$whichPlot == 1) {
@@ -212,50 +232,14 @@ server <- function(input, output) {
     }
   })
   
+  
+  
+  #initialize color vector
   colors <- c("darkblue", "darkgreen", "blueviolet")
   
   
-  output$clusters <- renderPlot({
-    clustering(
-      n = input$chooseN,
-      df = summary[1:60000,],
-      c(input$chooseX, input$chooseY),
-      c(input$chooseX, input$chooseY)
-    )
-  })
   
-  output$plotter <- renderPlot({
-    message("inthisbitch")
-    message("lolwut")
-    if ((input$choosePred=="EducationLevel")||(input$choosePred=="Year")||(input$choosePred=="Day")
-        ||(input$choosePred=="Race")){
-      message("shit going down")
-      means<-split(summary[,input$chooseResp],summary[,input$choosePred])
-      barplot(sapply(means,mean),col="lightblue",main=paste("Mean",input$chooseResp,"for",input$choosePred))
-      
-    }else{
-      message("okay")
-      plot(summary[,input$choosePred],summary[,input$chooseResp],
-           main=paste(input$choosePred,"vs.",input$chooseResp), 
-           col=rgb(0,100,0,30,maxColorValue=255), pch=16,
-           xlab=input$choosePred,ylab=input$chooseResp)
-      model <- lm(summary[,input$chooseResp]~summary[,input$choosePred])
-
-      #it would be really cool to add a prediction box too using the predict method 
-      
-      output$modelInfo <- renderPrint({summary(model)$coef})
-      abline(model, col="red") # regression line (y~x) 
-    }#plotter(summary[1:100,input$chooseX],summary[1:100,input$chooseY], dframe=summary[1:100,])
-    message("out")
-  })
-  
-  
-  startAge <- reactive({
-    input$ageRange[1]
-  })
-  endAge <- reactive({
-    input$ageRange[2]
-  })
+  #header for map output
   output$header <- renderText({
     if (input$whichPlot == 2) {
       paste("Demographics of Participants aged",
@@ -269,53 +253,13 @@ server <- function(input, output) {
     
   })
   
-  output$mainPlot <- renderPlot({
-    if (input$whichPlot == 2) {
-      plotNation(input$mapData, input$ageRange)
-    }
-    else {
-      plotNationEducation(input$educationLevel)
-    }
-  })
   
-  
-  
+  #mapping output for the nation plots on tab 1
+  #uses gvis for an interactive map
   output$gvis <- renderGvis({
     if (input$whichPlot == 1) {
-      # plotThis <- hs_incomplete
-      # education <- input$educationLevel1
-      #
-      # if (education == "High School Incomplete") {
-      #   plotThis <- hs_incomplete
-      # }
-      # if (education == "High School Diploma") {
-      #   plotThis <- hs_complete
-      # }
-      # if (education == "Some College") {
-      #   plotThis <- some_college
-      # }
-      # if (education == "Bachelor's/Associate's") {
-      #   plotThis <- ba_complete
-      # }
-      # if (education == "Masters and Above") {
-      #   plotThis <- masters_above
-      # }
-      # averages <- aggregate(hoursWorked ~ state, plotThis, mean)
-      # averages <- averages[-9,]
-      # averages$region <- arr$region
-      #
-      # us <- map_data("state")
-      #
-      # arr <- USArrests %>%
-      #   tibble::rownames_to_column("region") %>%
-      #   mutate(region=tolower(region))
-      #
-      # test <-  merge(arr, averages, by="region")[c(1,7)]
-      
-      
       test <- plotNationEducation(input$educationLevel1)
       
-      #print(head(test))
       gvisGeoChart(
         test,
         locationvar = "region",
@@ -332,7 +276,6 @@ server <- function(input, output) {
     }
     else {
       participants <- plotNation(input$mapData, input$ageRange)
-      print(participants)
       gvisGeoChart(
         participants[[1]],
         locationvar = "region",
@@ -346,16 +289,99 @@ server <- function(input, output) {
           colorAxis = "{colors:['#FFFFFF', '#8E35EF']}"
         )
       )
-      
     }
-    
-    
+  })
+  
+  #clustering plot output calls the clustering method with the inputs provided by user
+  output$clusters <- renderPlot({
+    clustering(
+      n = input$chooseN,
+      df = summary[1:60000,],
+      c(input$chooseX, input$chooseY),
+      c(input$chooseX, input$chooseY)
+    )
   })
   
   
-  #shinyjs::onclick("mapData", print("hi"))
+  #plotting the plot based on user input for regression
+  #this also sets some text output variables that are displayed to the user
+  output$plotter <- renderPlot({
+    #handle labels
+    x.title <- axis.labeler(input$choosePred)
+    y.title <- axis.labeler(input$chooseResp)
+    
+    if ((input$choosePred == "EducationLevel") ||
+        (input$choosePred == "Year") || (input$choosePred == "Day")
+        || (input$choosePred == "Race")) {
+      means <-
+        split(summary[, input$chooseResp], summary[, input$choosePred])
+      barplot(
+        sapply(means, mean),
+        col = "lightblue",
+        main = paste("Mean", input$chooseResp, "for", input$choosePred),
+        xlab = x.title,
+        ylab = y.title
+      )
+      
+    } else{
+      plot(
+        summary[, input$choosePred],
+        summary[, input$chooseResp],
+        main = paste(input$choosePred, "vs.", input$chooseResp),
+        col = rgb(0, 100, 0, 30, maxColorValue = 255),
+        pch = 16,
+        xlab = x.title,
+        ylab = y.title
+      )
+      model <-
+        lm(summary[, input$chooseResp] ~ summary[, input$choosePred])
+      
+      
+      output$modelInfo <- renderPrint({
+        summary(model)$coef
+      })
+      output$modelCorr <- renderPrint({
+        anova(model)
+      })
+      abline(model, col = "red") # regression line (y~x)
+    }#plotter(summary[1:100,input$chooseX],summary[1:100,input$chooseY], dframe=summary[1:100,])
+  })
   
+  
+  #refactoring input ages into their own variables
+  startAge <- reactive({
+    input$ageRange[1]
+  })
+  endAge <- reactive({
+    input$ageRange[2]
+  })
+  
+  ?as.numeric
+  #regression predictor output
+  output$value <- renderText({
+    if (length(input$nums) > 0 && !is.na(as.numeric(input$nums))) {
+      paste(
+        "If the value of",
+        input$choosePred,
+        "is",
+        input$nums,
+        "then then data suggests that the value of",
+        input$chooseResp,
+        "will be",
+        round(
+          lm(summary[, input$chooseResp] ~ summary[, input$choosePred])[[1]][[1]] +
+            lm(summary[, input$chooseResp] ~ summary[, input$choosePred])[[1]][[2]] *
+            as.numeric(input$nums),
+          3
+        ),
+        input$chosePred
+      )
+    } else {
+      return("Please enter a positive numeric value")
+    }
+  })
   
 }
 
+#run the shiny App!!
 shinyApp(ui = ui, server = server)

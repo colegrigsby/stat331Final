@@ -1,9 +1,8 @@
-#setwd("~/Documents/JuniorCalPoly/Stat331/final proj/stat331Final/")
-
 library(maps)
 library(rvest)
 data("state.fips")
 
+#read the data sets necesary to run the app! 
 
 respondents <- read.delim("atusresp_0315.dat", sep = ",")
 #roster <- read.delim("atusrost_0315.dat", sep = ",")
@@ -14,11 +13,12 @@ cps <- read.delim("atuscps_0315.dat", sep = ",")
 #eldercare <- read.delim("atusrostec_1115.dat", sep = ",")
 #weights <- read.delim("atuswgts_0315.dat", sep = ",")
 
-
-#CREATE state factor and add to user.data along with PRAGE
+#set up state data 
 st <- factor(cps$GESTFIPS)
 levels(st) <- c(state.abb[1:8], "DC", state.abb[9:50])
 cps$state <- st
+
+#create a data frame with the variables that are of interest 
 user.data <- data.frame(respondents$TUCASEID)
 colnames(user.data) <- c("TUCASEID")
 user.data <-
@@ -29,16 +29,14 @@ user.data <-
 
 #Map Plot Stuff
 
-
 # reading data for average hours worked tab
 user.data.hours <-
   user.data[user.data$PEHRACTT != -1 & user.data$PEEDUCA != -1,]
-#hours.data <- aggregate(PRTAGE ~ state, user.data.hours, mean)
 
 colnames(user.data.hours) <-
   c("id", "state", "age", "hoursWorked", "education")
-table(user.data.hours$education)
 
+#education clean up 
 hs_incomplete <- user.data.hours[user.data.hours$education <= 38,]
 hs_complete <- user.data.hours[user.data.hours$education == 39,]
 some_college <- user.data.hours[user.data.hours$education == 40,]
@@ -61,19 +59,9 @@ statePopulations[-1] <-
   as.data.frame(lapply(statePopulations[-1], function(x) {
     as.numeric(as.character(gsub("[^0-9]", "", x)))
   }))
-# lat long for labeling states
-centers <- read.csv('state_latlon.csv')
-centers <- centers[c(-1, -4,-9, -13, -27,-42, -50),]
-centers
 
 
-
-
-
-
-
-
-
+#getting very specific varaibles that are related to each other into one category  
 perscare <-
   c(
     "010101",
@@ -508,27 +496,7 @@ travel <-
     189999
   )
 falsehoods <- c(500101, 500103:500107, 509989)
-all <-
-  c(
-    perscare,
-    household,
-    caringhh,
-    caringnhh,
-    work,
-    education,
-    shopping,
-    careserv,
-    householdserv,
-    govserv,
-    eat,
-    social,
-    religious,
-    volunteer,
-    telephone,
-    travel,
-    falsehoods,
-    sports
-  )
+
 #"Work","Education", "Social","Sports","Age", "Weekly Earnings","Religious",Volunteer"
 answers <-
   c(
@@ -551,6 +519,9 @@ answers <-
     "falsehoods",
     "Sports"
   )
+
+#modifying summary data / adding general categories to it 
+
 summary=summary[summary$TRERNWA!=-1,]
 summary$Age = summary$TEAGE
 summary$Year=summary$TUYEAR
@@ -582,7 +553,7 @@ for (i in 1:length(answers)) {
   }
 }
 
-
+#education 
 nodegrees<-c(31:38)
 hsdegree<-c(39)
 somecollege<-c(40:42)
@@ -600,6 +571,7 @@ for (i in 1:length(all)){
   }
 }
 
+#days of the week they reported 
 days <-
   c("Sunday",
     "Monday",
@@ -619,75 +591,37 @@ for (i in 1:5) {
   summary[summary$PTDTRACE == i,]$Race = race[i]
 }
 
+#x and y axis labeler + units 
+axis.labeler <- function(title){
+  units = "minutes"
 
-
-
-
-
-
-plotter <- function(x, y, cat = c(-5), dframe) {
-  #xf=unlist(dframe[x])
-  #yf=unlist(dframe[y])
-  if ((class(x) == "integer" ||
-       class(x) == "numeric") &&
-      (class(y) == "integer" || class(y) == "numeric")) {
-    message("yo")
-    if (cat[1] == -5) {
-      message("dawg")
-      return(ggplot(dframe) + geom_point(aes(x = x, y = y), alpha = .2) +
-               geom_smooth(method = "lm"))
-      #qplot(data=dframe,x=x,y=y)
-    } else {
-      message("entered")
-      return(ggplot(dframe) + geom_point(aes_string(
-        x = x, y = y, col = cat
-      ), alpha = 0.2))
-      #    qplot(data=dframe,x=x,y=y,col=cat)
-    }
-  } else if (class(x) == "character") {
-    message("wrong")
-    return(
-      ggplot(dframe) + geom_bar(
-        aes_string(x, y, fill = "blue"),
-        col = "black",
-        fill = "blue",
-        position = "dodge",
-        stat = "summary",
-        fun.y = "mean"
-      )
-    )
-    
+  if (title == "Age"){
+    units = "years"
   }
+  else if(title == "WeeklyEarnings"){
+    units = "dollars"
+  }
+  return(paste(title, " (", units, ")", sep=""))
 }
 
+
+#clustering function for creating a clustered plot 
 clustering <- function(n = 2, df, clustcolumns, plotcolumns) {
   n <- as.numeric(n)
   set.seed(10)
-  #print(df[,clustcolumns])
-  #print(n)
   
-  #df <- df[complete.cases(df[,clustcolumns]),clustcolumns]
-  
-  #print(which(is.na(df[,clustcolumns])))
+  y.title = axis.labeler(plotcolumns[2])
+  x.title = axis.labeler(plotcolumns[1])
   
   clusters <- kmeans(df[,clustcolumns], n, nstart = 10)$cluster
-  message("#pastit")
   if (length(plotcolumns) != 2) {
-    
+    message("no bueno")
   } else{
     ggplot(df) + geom_point(aes_string(x = plotcolumns[1], y = plotcolumns[2], col =
                                          clusters),
-                            alpha = 0.2) + guides(fill = F)
+                            alpha = 0.2) + theme(legend.position="none")  + xlab(x.title) + ylab(y.title)
   }
 }
 
-capitalize <- function(x) {
-  up <- paste(toupper(substring(x, 1, 1)) , substring(x, 2), sep = "")
-  return(up)
-}
 
 
-colnames(summary)
-plotter("perscare", "TRYHHCHILD", "sports", dframe = summary)
-class(summary$perscare)
-head(summary)
