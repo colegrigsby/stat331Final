@@ -566,7 +566,7 @@ summary$EducationLevel="NULL-needs UPDATING"
 for (i in 1:length(all)){
   currentlist<-get(all[i])
   for (j in 1:length(currentlist)){
-    message(currentlist)
+    #message(currentlist)
     summary[summary$PEEDUCA==currentlist[j],]$EducationLevel=all[i]
   }
 }
