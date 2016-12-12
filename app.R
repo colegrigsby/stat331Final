@@ -14,7 +14,7 @@ library(rvest)
 library(shinyjs)
 library(ggplot2)
 #enable the source files when running to have all data and methods available to app :)
-source("ReadingData.R")
+#source("ReadingData.R")
 source("MappingStuff.R")
 
 ui <- fluidPage(
@@ -180,13 +180,8 @@ ui <- fluidPage(
           ),
           selected = "Age"
         )),
-      sidebarPanel(
-        radioButtons(
-          "chooseCat",
-          label = "IGNORE",
-          choices = c("N/A", "Year", "EducationLevel", "Day", "Race"),
-          selected = "N/A"
-        )
+      fluidRow(
+        verbatimTextOutput("modelInfo")
       )
     )
     
@@ -244,7 +239,12 @@ server <- function(input, output) {
            main=paste(input$choosePred,"vs.",input$chooseResp), 
            col=rgb(0,100,0,30,maxColorValue=255), pch=16,
            xlab=input$choosePred,ylab=input$chooseResp)
-      abline(lm(summary[,input$chooseResp]~summary[,input$choosePred]), col="red") # regression line (y~x) 
+      model <- lm(summary[,input$chooseResp]~summary[,input$choosePred])
+
+      #it would be really cool to add a prediction box too using the predict method 
+      
+      output$modelInfo <- renderPrint({summary(model)$coef})
+      abline(model, col="red") # regression line (y~x) 
     }#plotter(summary[1:100,input$chooseX],summary[1:100,input$chooseY], dframe=summary[1:100,])
     message("out")
   })
