@@ -223,7 +223,7 @@ server <- function(input, output) {
   output$clusters <- renderPlot({
     clustering(
       n = input$chooseN,
-      df = summary[1:10000,],
+      df = summary[1:60000,],
       c(input$chooseX, input$chooseY),
       c(input$chooseX, input$chooseY)
     )
@@ -234,12 +234,12 @@ server <- function(input, output) {
     message("lolwut")
     if (input$chooseCat!="N/A"){
       message("shit going down")
-      means<-split(summary[1:100,input$chooseResp],summary[1:100,input$chooseCat])
+      means<-split(summary[,input$chooseResp],summary[,input$chooseCat])
       barplot(sapply(means,mean),col="lightblue",main=paste("Mean",input$chooseResp,"for",input$chooseResp))
       
     }else{
       message("okay")
-      plot(summary[1:90000,input$choosePred],summary[1:90000,input$chooseResp],
+      plot(summary[,input$choosePred],summary[,input$chooseResp],
          main=paste(input$choosePred,"vs.",input$chooseResp), 
          col=rgb(0,100,0,30,maxColorValue=255), pch=16,
          xlab=input$choosePred,ylab=input$chooseResp)
