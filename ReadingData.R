@@ -5,12 +5,12 @@ library(rvest)
 data("state.fips")
 
 
-respondents <- read.delim("C:/Users/Michael/Downloads/atusresp_0315/atusresp_0315.dat", sep = ",")
+respondents <- read.delim("atusresp_0315.dat", sep = ",")
 #roster <- read.delim("atusrost_0315.dat", sep = ",")
 #activity <- read.delim("atusact_0315.dat", sep = ",")
-summary <- read.delim("C:/Users/Michael/Downloads/atussum_0315/atussum_0315.dat", sep = ",")
+summary <- read.delim("atussum_0315.dat", sep = ",")
 #who <- read.delim("atuswho_0315.dat", sep = ",")
-cps <- read.delim("C:/Users/Michael/Downloads/atuscps_0315/atuscps_0315.dat", sep = ",")
+cps <- read.delim("atuscps_0315.dat", sep = ",")
 #eldercare <- read.delim("atusrostec_1115.dat", sep = ",")
 #weights <- read.delim("atuswgts_0315.dat", sep = ",")
 
