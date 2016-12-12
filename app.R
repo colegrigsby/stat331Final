@@ -12,7 +12,7 @@ library(googleVis)
 library(maps)
 library(rvest)
 library(shinyjs)
-
+library(ggplot2)
 #enable the source files when running to have all data and methods available to app :)
 source("ReadingData.R")
 source("MappingStuff.R")
@@ -132,70 +132,70 @@ ui <- fluidPage(
           selected = "Age"
         )
       )
-    ,
-    sidebarPanel(
-      radioButtons(
-        "chooseN",
-        label = "Choose Number of Clusters",
-        choices = c(2, 3, 4, 5),
-        selected = 2
+      ,
+      sidebarPanel(
+        radioButtons(
+          "chooseN",
+          label = "Choose Number of Clusters",
+          choices = c(2, 3, 4, 5),
+          selected = 2
+        )
+      )
+      
+      
+    ),
+    tabPanel(
+      "Regression",
+      h1("Regression"),
+      fluidRow(plotOutput("plotter")),
+      sidebarPanel(
+        radioButtons(
+          "choosePred",
+          label = "Choose a Predictor variable",
+          choices = c(
+            "Work",
+            "Education",
+            "Social",
+            "Sports",
+            "Age",
+            "WeeklyEarnings",
+            "Religious",
+            "Volunteer"
+          ),
+          selected = "Education"
+        )),
+      sidebarPanel(
+        radioButtons(
+          "chooseResp",
+          label = "Choose a Response variable",
+          choices = c(
+            "Work",
+            "Education",
+            "Social",
+            "Sports",
+            "Age",
+            "WeeklyEarnings",
+            "Religious",
+            "Volunteer"
+          ),
+          selected = "Age"
+        )),
+      sidebarPanel(
+        radioButtons(
+          "chooseCat",
+          label = "Choose a categorical variable",
+          choices = c("N/A", "Year", "EducationLevel", "Day", "Race"),
+          selected = "N/A"
+        )
       )
     )
     
     
-  ),
-  tabPanel(
-    "Regression",
-    h1("Regression"),
-    fluidRow(plotOutput("plotter")),
-    sidebarPanel(
-      radioButtons(
-        "chooseX",
-        label = "Choose an X variable",
-        choices = c(
-          "Work",
-          "Education",
-          "Social",
-          "Sports",
-          "Age",
-          "WeeklyEarnings",
-          "Religious",
-          "Volunteer"
-        ),
-        selected = "Education"
-      )),
-    sidebarPanel(
-      radioButtons(
-        "chooseY",
-        label = "Choose a Y variable",
-        choices = c(
-          "Work",
-          "Education",
-          "Social",
-          "Sports",
-          "Age",
-          "WeeklyEarnings",
-          "Religious",
-          "Volunteer"
-        ),
-        selected = "Age"
-      )),
-    sidebarPanel(
-      radioButtons(
-        "chooseCat",
-        label = "Choose a categorical variable",
-        choices = c("N/A", "Year", "Education Level", "Day", "Race"),
-        selected = "N/A"
-      )
-    )
-  )
     
-
-  
-  
-  
-  
-))
+    
+    
+    
+  ))
 
 
 
@@ -231,11 +231,20 @@ server <- function(input, output) {
   
   output$plotter <- renderPlot({
     message("inthisbitch")
-    
-    #ggplot(summary[1:100,])+geom_point(aes_string(x=input$chooseX,y=input$chooseY),alpha=.2)
-    ggplot(summary) + geom_point(aes_string(x = input$chooseX, y = input$chooseY), alpha =
-                                   .2)
-    #plotter(summary[1:100,input$chooseX],summary[1:100,input$chooseY], dframe=summary[1:100,])
+    message("lolwut")
+    if (input$chooseCat!="N/A"){
+      message("shit going down")
+      means<-split(summary[1:100,input$chooseResp],summary[1:100,input$chooseCat])
+      barplot(sapply(means,mean),col="lightblue",main=paste("Mean",input$chooseResp,"for",input$chooseResp))
+      
+    }else{
+      message("okay")
+      plot(summary[1:90000,input$choosePred],summary[1:90000,input$chooseResp],
+         main=paste(input$choosePred,"vs.",input$chooseResp), 
+         col=rgb(0,100,0,30,maxColorValue=255), pch=16,
+         xlab=input$choosePred,ylab=input$chooseResp)
+    abline(lm(summary[1:90000,input$choosePred]~summary[1:90000,input$chooseResp]), col="red") # regression line (y~x) 
+    }#plotter(summary[1:100,input$chooseX],summary[1:100,input$chooseY], dframe=summary[1:100,])
     message("out")
   })
   
