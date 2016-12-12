@@ -581,26 +581,21 @@ for (i in 1:length(answers)) {
   }
 }
 
-nodegrees <- c(31:38)
-hsdegree <- c(39)
-somecollege <- c(40:42)
-bachelors <- c(43)
-masters <- c(44)
-otherhigher <- c(45, 46)
-all <-
-  c("nodegrees",
-    "hsdegree",
-    "somecollege",
-    "bachelors",
-    "masters",
-    "otherhigher")
-summary$Education = "NULL-needs UPDATING"
 
-for (i in 1:length(all)) {
-  currentlist <- get(all[i])
-  for (j in 1:length(currentlist)) {
+nodegrees<-c(31:38)
+hsdegree<-c(39)
+somecollege<-c(40:42)
+bachelors<-c(43)
+masters<-c(44)
+otherhigher<-c(45,46)
+all<-c("nodegrees","hsdegree","somecollege","bachelors","masters","otherhigher")
+summary$EducationLevel="NULL-needs UPDATING"
+
+for (i in 1:length(all)){
+  currentlist<-get(all[i])
+  for (j in 1:length(currentlist)){
     message(currentlist)
-    summary[summary$PEEDUCA == currentlist[j],]$Education = all[i]
+    summary[summary$PEEDUCA==currentlist[j],]$EducationLevel=all[i]
   }
 }
 
