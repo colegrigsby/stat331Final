@@ -160,7 +160,7 @@ ui <- fluidPage(
             "Age",
             "WeeklyEarnings",
             "Religious",
-            "Volunteer"
+            "Volunteer","Year", "EducationLevel", "Day", "Race"
           ),
           selected = "Education"
         )),
@@ -183,7 +183,7 @@ ui <- fluidPage(
       sidebarPanel(
         radioButtons(
           "chooseCat",
-          label = "Choose a categorical variable",
+          label = "IGNORE",
           choices = c("N/A", "Year", "EducationLevel", "Day", "Race"),
           selected = "N/A"
         )
@@ -232,18 +232,19 @@ server <- function(input, output) {
   output$plotter <- renderPlot({
     message("inthisbitch")
     message("lolwut")
-    if (input$chooseCat!="N/A"){
+    if ((input$choosePred=="EducationLevel")||(input$choosePred=="Year")||(input$choosePred=="Day")
+        ||(input$choosePred=="Race")){
       message("shit going down")
-      means<-split(summary[,input$chooseResp],summary[,input$chooseCat])
-      barplot(sapply(means,mean),col="lightblue",main=paste("Mean",input$chooseResp,"for",input$chooseResp))
+      means<-split(summary[,input$chooseResp],summary[,input$choosePred])
+      barplot(sapply(means,mean),col="lightblue",main=paste("Mean",input$chooseResp,"for",input$choosePred))
       
     }else{
       message("okay")
       plot(summary[,input$choosePred],summary[,input$chooseResp],
-         main=paste(input$choosePred,"vs.",input$chooseResp), 
-         col=rgb(0,100,0,30,maxColorValue=255), pch=16,
-         xlab=input$choosePred,ylab=input$chooseResp)
-    abline(lm(summary[1:90000,input$choosePred]~summary[1:90000,input$chooseResp]), col="red") # regression line (y~x) 
+           main=paste(input$choosePred,"vs.",input$chooseResp), 
+           col=rgb(0,100,0,30,maxColorValue=255), pch=16,
+           xlab=input$choosePred,ylab=input$chooseResp)
+      abline(lm(summary[,input$chooseResp]~summary[,input$choosePred]), col="red") # regression line (y~x) 
     }#plotter(summary[1:100,input$chooseX],summary[1:100,input$chooseY], dframe=summary[1:100,])
     message("out")
   })
